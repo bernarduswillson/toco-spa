@@ -1,7 +1,11 @@
+import React from 'react'
+import Link from 'next/link'
+
 const LandingPage: React.FC = () => {
   return (
-    <div className='h-screen relative'>
-      your code here
+    <div>
+      <h1>Ceritanya ini Landing Page</h1>
+      <Link href="/about">coba pencet ini</Link>
     </div>
   )
 }
