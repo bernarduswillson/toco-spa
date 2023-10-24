@@ -1,4 +1,4 @@
-# 'name' Frontend
+# Toco-spa Frontend
 
 ## Tech Stack
 
