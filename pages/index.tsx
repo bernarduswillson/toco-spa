@@ -5,7 +5,7 @@ const LandingPage: React.FC = () => {
   return (
     <div>
       <h1>Ceritanya ini Landing Page</h1>
-      <Link href="/about">coba pencet ini</Link>
+      <Link href="/login">coba pencet ini</Link>
     </div>
   )
 }
