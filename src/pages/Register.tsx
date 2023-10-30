@@ -108,18 +108,18 @@ const Register: React.FC = () => {
             <div className='flex justify-center mt-[80px] mb-[30px]'>
               {loading
                 ? (
-                <div className='Poppins300 text-[20px] distinct-button w-[250px] text-center opacity-60'>
-                  Loading...
-                </div>
-                  )
+                  <div className='Poppins300 text-[20px] distinct-button w-[250px] text-center opacity-60'>
+                    Loading...
+                  </div>
+                )
                 : (
-                <button
-                  onClick={handleRegister}
-                  className='Poppins300 text-[20px] custom-button w-[250px] text-center transition-all duration-300 ease-in-out hover:translate-y-[-3px] hover:opacity-60 active:translate-y-[3px]'
-                >
-                  Register
-                </button>
-                  )}
+                  <button
+                    onClick={handleRegister}
+                    className='Poppins300 text-[20px] custom-button w-[250px] text-center transition-all duration-300 ease-in-out hover:translate-y-[-3px] hover:opacity-60 active:translate-y-[3px]'
+                  >
+                    Register
+                  </button>
+                )}
             </div>
             <div className='Poppins300 text-center text-grey underline'>
               <Link to='/login'>
