@@ -1,13 +1,9 @@
 import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-
-import tuco from '@src/assets/images/tuco-artwork.png'
-import logo from '@src/components/Icon/logo.svg'
+import { Link } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const tucoBg = {
-    backgroundImage: `url(${tuco.src})`,
+    backgroundImage: 'url("/images/tuco-artwork.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   }
@@ -20,7 +16,7 @@ const Login: React.FC = () => {
         <div className='w-full lg:w-1/2 flex justify-center items-center'>
           <div className='w-[65%]'>
             <div className='flex justify-center'>
-              <Image src={logo} width={90} height={90} alt='logo' />
+              <img src='/images/logo.svg' width={90} height={90} alt='logo' />
             </div>
             <div className='text-blue-orange-gradient Poppins700 text-[50px] text-center mb-[50px]'>
               Login
@@ -30,7 +26,7 @@ const Login: React.FC = () => {
             </label>
             <input
               type='text'
-              className='border-b-[1.5px] border-0 rounded-none border-black outline-none pb-[5px] pl-[3px] w-full text-[18px] Poppins300 transition-all ease-in-out duration-300 focus:w-[103%] mb-[40px]'
+              className='border-b-[1.5px] border-0 rounded-none border-black outline-none pb-[5px] pl-[3px] w-full text-[18px] Poppins300 transition-all ease-in-out duration-300 focus:w-[103%] focus:border-[blue] mb-[40px]'
               placeholder='Your username'
               style={{ boxShadow: 'none' }}
             />
@@ -39,22 +35,22 @@ const Login: React.FC = () => {
             </label>
             <input
               type='text'
-              className='border-b-[1.5px] border-0 rounded-none border-black outline-none pb-[5px] pl-[3px] w-full text-[18px] Poppins300 transition-all ease-in-out duration-300 focus:w-[103%]'
+              className='border-b-[1.5px] border-0 rounded-none border-black outline-none pb-[5px] pl-[3px] w-full text-[18px] Poppins300 transition-all ease-in-out duration-300 focus:w-[103%] focus:border-[blue]'
               placeholder='Your password'
               style={{ boxShadow: 'none' }}
             />
             <div className='flex justify-center mt-[80px] mb-[30px]'>
-              <div className='Poppins300 text-[20px] distinct-button w-[250px] text-center transition-all duration-300 ease-in-out hover:translate-y-[-3px] hover:opacity-60 active:translate-y-[3px]'>
+              <div className='Poppins300 text-[20px] custom-button text-center transition-all duration-300 ease-in-out hover:translate-y-[-3px] hover:opacity-60 active:translate-y-[3px]'>
                 Login
               </div>
             </div>
             <div className='Poppins300 text-center text-grey underline'>
-              <Link href='/register'>
+              <Link to='/register'>
                 Dont have an account yet? Register here
               </Link>
             </div>
             <div className='Poppins300 text-center text-grey underline'>
-              <Link href='/'>
+              <Link to='/'>
                 Forgot password?
               </Link>
             </div>
