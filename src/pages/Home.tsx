@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookie from 'js-cookie';
 
+import Sidebar from '../components/organisms/Sidebar';
+
 const Home = () => {
   const navigate = useNavigate();
   const token = Cookie.get('token');
@@ -15,8 +17,7 @@ const Home = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">Hello kontl</h1>
-      <Link to="/login">Go to Login</Link>
+      <Sidebar active='Home'/>
     </div>
   );
 };
