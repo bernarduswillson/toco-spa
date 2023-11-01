@@ -1,49 +1,64 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Cookie from 'js-cookie';
 
 interface userData {
   name: string
   password: string
-}
+};
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const token = Cookie.get('token');
+
+  // Token validation
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  }, [token, navigate]);
+  
+  // Tuco artwork
   const tucoBg = {
     backgroundImage: 'url("/images/tuco-artwork.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
-  }
+  };
 
+  // Form values
   const [formData, setFormData] = useState<userData>({
     name: '',
     password: ''
-  })
-
-  const [loading, setLoading] = useState(false)
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
+  // Login
   const loginData = async (data: userData): Promise<void> => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      console.log(data)
+      const response = await axios.post('http://localhost:5000/auth/login', data);
+      
+      if (response.status === 200) {
+        navigate('/');
+        Cookie.set('token', response.data.token);
+      }
 
-      const response = await axios.post('http://localhost:5000/login', data)
-      console.log(response)
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      console.log(error)
+      setLoading(false);
     }
   }
 
   const handleLogin = (): void => {
-    void loginData(formData)
-  }
+    void loginData(formData);
+  };
 
   return (
     <div className='h-screen relative'>
@@ -111,7 +126,7 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

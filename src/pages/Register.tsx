@@ -1,51 +1,65 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Cookie from 'js-cookie';
 
 interface userData {
-  name: string
+  username: string
   email: string
   password: string
-}
+};
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const token = Cookie.get('token');
+
+  // Token validation
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  }, [token, navigate]);
+
+  // Toco Artwork
   const tucoBg = {
     backgroundImage: 'url("/images/tuco-artwork.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
-  }
-
+  };
+  
+  // Form values
   const [formData, setFormData] = useState<userData>({
-    name: '',
+    username: '',
     email: '',
     password: ''
-  })
-
-  const [loading, setLoading] = useState(false)
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
+  // Register
   const registerData = async (data: userData): Promise<void> => {
     try {
-      setLoading(true)
+      setLoading(true);
+      
+      const response = await axios.post('http://localhost:5000/auth/register', data);
 
-      console.log(data)
+      if (response.status === 200 && response.data.message === "Register success") {
+        navigate('/login');
+      }
 
-      const response = await axios.post('http://localhost:5000/register', data)
-      console.log(response)
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      console.log(error)
+      setLoading(false);
     }
-  }
+  };
 
   const handleRegister = (): void => {
-    void registerData(formData)
-  }
+    void registerData(formData);
+  };
 
   return (
     <div className='h-screen relative'>
@@ -80,8 +94,8 @@ const Register: React.FC = () => {
               placeholder='Your username'
               style={{ boxShadow: 'none' }}
               type="text"
-              name="name"
-              value={formData.name}
+              name="username"
+              value={formData.username}
               onChange={handleInputChange}
             />
             <label className='text-orange Poppins800 text-[18px]'>
@@ -130,7 +144,7 @@ const Register: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
