@@ -12,6 +12,12 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const token = Cookie.get('token');
+  const [formData, setFormData] = useState<userData>({
+    name: '',
+    password: ''
+  });
+
+  const [canLogin, setCanLogin] = useState(false);
 
   // Token validation
   useEffect(() => {
@@ -19,6 +25,15 @@ const Login: React.FC = () => {
       navigate('/');
     }
   }, [token, navigate]);
+
+  // Handle can login
+  useEffect(() => {
+    if (formData.name && formData.password) {
+      setCanLogin(true);
+    } else {
+      setCanLogin(false);
+    }
+  }, [formData]);
   
   // Tuco artwork
   const tucoBg = {
@@ -26,12 +41,6 @@ const Login: React.FC = () => {
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
-
-  // Form values
-  const [formData, setFormData] = useState<userData>({
-    name: '',
-    password: ''
-  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -98,10 +107,10 @@ const Login: React.FC = () => {
               onChange={handleInputChange}
             />
             <div className='flex justify-center mt-[80px] mb-[30px]'>
-              {loading
+              {loading || !canLogin
                 ? (
-                  <div className='Poppins300 text-[20px] distinct-button w-[250px] text-center opacity-60'>
-                    Loading...
+                  <div className='Poppins300 text-[20px] custom-button w-[250px] text-center opacity-60'>
+                    Login
                   </div>
                 )
                 : (
