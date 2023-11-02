@@ -67,11 +67,11 @@ const Sidebar = (props: SidebarProps) => {
         )
       }
 
-      <nav className={`bg-[--orange] sticky ${isOpen ? "w-[280px]" : "w-fit"} h-screen px-4 pb-5 transition-width duration-150 ease-in-out`}>
+      <nav className={`bg-[--orange] min-w-fit fixed ${isOpen ? "w-[280px]" : "w-fit"} h-screen px-4 pb-5 transition-width duration-150 ease-in-out`}>
 
         {/* Toggle button */}
         <button
-          className='absolute -right-12 top-6 bg-[--orange] w-[40px] h-[40px] rounded-full flex justify-center items-center'
+          className='absolute -right-12 top-6 bg-[--orange] w-[40px] h-[40px] rounded-full flex justify-center items-center opacity-50 hover:opacity-100'
           onClick={() => handleToggle()}
         >
           <img
