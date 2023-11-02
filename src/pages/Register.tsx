@@ -69,7 +69,7 @@ const Register: React.FC = () => {
         <div className='w-full lg:w-1/2 flex justify-center items-center'>
           <div className='w-[65%]'>
             <div className='flex justify-center'>
-              <img src='/images/logo.svg' width={90} height={90} alt='logo' />
+              <img src='/icons/logo.svg' width={90} height={90} alt='logo' />
             </div>
             <div className='text-blue-orange-gradient Poppins700 text-[50px] text-center mb-[50px]'>
               Register
