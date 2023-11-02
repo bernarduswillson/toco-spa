@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Cookie from 'js-cookie';
 
 import Sidebar from '../components/organisms/Sidebar';
