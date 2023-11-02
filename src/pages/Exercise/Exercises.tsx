@@ -7,6 +7,7 @@ import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import Searchbar from '../../components/atoms/Searchbar';
 import Filter from '../../components/atoms/Filter';
+import ExerciseMobileCard from '../../components/molecules/ExerciseMobileCard';
 
 interface SearchData {
   search: string;
@@ -98,6 +99,29 @@ const Exercises = () => {
   ];
   // =======================================
 
+  // Exercise Data =========================
+  const exerciseData = [
+    {
+      id: 0,
+      language: '/images/english-flag.png',
+      name: 'Latihan 1',
+      difficulty: 'Beginner'
+    },
+    {
+      id: 1,
+      language: '/images/english-flag.png',
+      name: 'Latihan 2',
+      difficulty: 'Beginner'
+    },
+    {
+      id: 2,
+      language: '/images/indonesian-flag.png',
+      name: 'Latihan 1',
+      difficulty: 'Advanced'
+    }
+  ];
+  // =======================================
+
   return (
     <div className='flex'>
       {/* Sidebar */}
@@ -134,6 +158,30 @@ const Exercises = () => {
         </div>
 
         {/* Records */}
+        <div className='w-full max-w-[920px] flex flex-col gap-2'>
+          <table className='min-w-full divide-y divide-gray-400'>
+            <tr className=''>
+              <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>No</th>
+              <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Lang</th>
+              <th className='lg:hidden bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Details</th>
+              <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Name</th>
+              <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Difficulty</th>
+              <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
+            </tr>
+            {
+              exerciseData.map((exercise, number) => 
+                <ExerciseMobileCard
+                  id={exercise.id}
+                  number={number + 1}
+                  language={exercise.language}
+                  name={exercise.name}
+                  difficulty={exercise.difficulty}
+                />
+              )
+            }
+          </table>
+
+        </div>
       </div>
     </div>
   );
