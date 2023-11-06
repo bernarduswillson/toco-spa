@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookie from 'js-cookie';
+import axios from 'axios';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -13,6 +14,14 @@ interface SearchData {
   search: string;
   difficulty: string;
   language: string;
+}
+
+interface ExerciseData {
+  exercise_id: number;
+  exe_name: string;
+  language_id: number;
+  category: string;
+  difficulty: string;
 }
 
 const Exercises = () => {
@@ -100,26 +109,19 @@ const Exercises = () => {
   // =======================================
 
   // Exercise Data =========================
-  const exerciseData = [
-    {
-      id: 0,
-      language: '/images/english-flag.png',
-      name: 'Latihan 1',
-      difficulty: 'Beginner'
-    },
-    {
-      id: 1,
-      language: '/images/english-flag.png',
-      name: 'Latihan 2',
-      difficulty: 'Beginner'
-    },
-    {
-      id: 2,
-      language: '/images/indonesian-flag.png',
-      name: 'Latihan 1',
-      difficulty: 'Advanced'
-    }
-  ];
+  const [fetchLoading, setFetchLoading] = useState<boolean>(true);
+  const [exerciseData, setExerciseData] = useState<ExerciseData[]>([]);
+  useEffect(() => {
+    axios.get('http://localhost:5000/exercise/')
+      .then((response) => {
+        setExerciseData(response.data.result);
+        setFetchLoading(false);
+      })
+      .catch((err) => {
+        console.log("Error euy");
+        setFetchLoading(false);
+      })
+  }, [])
   // =======================================
 
   return (
@@ -169,12 +171,11 @@ const Exercises = () => {
               <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
             </tr>
             {
-              exerciseData.map((exercise, number) => 
+              !fetchLoading && exerciseData && exerciseData.map((exercise, number) => 
                 <ExerciseMobileCard
-                  id={exercise.id}
+                  id={exercise.exercise_id}
                   number={number + 1}
-                  language={exercise.language}
-                  name={exercise.name}
+                  name={exercise.exe_name}
                   difficulty={exercise.difficulty}
                 />
               )
