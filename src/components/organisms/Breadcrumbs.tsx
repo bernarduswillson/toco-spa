@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 interface Crumb {
   id: number;
@@ -20,16 +21,20 @@ const Breadcrumbs = (props: urlPathProps) => {
         urlPath.map((crumb) => {
           if (crumb.active) {
             return (
-              <a href={crumb.url} className='Poppins400 text-[--orange] text-xs px-2 py-1 rounded-md flex items-center hover:bg-slate-200'>
+              <Link to={crumb.url}>
+                <div className='Poppins400 text-[--orange] text-xs px-2 py-1 rounded-md flex items-center hover:bg-slate-200'>
                 {crumb.name}
-              </a>
+                </div>
+              </Link>
             )
           } else {
             return (
               <>
-                <a href={crumb.url} className='Poppins400 text-[--grey] text-xs px-2 py-1 rounded-md flex items-center hover:bg-slate-200'>
-                  {crumb.name}
-                </a>
+                <Link to={crumb.url}>
+                  <div className='Poppins400 text-[--grey] text-xs px-2 py-1 rounded-md flex items-center hover:bg-slate-200'>
+                    {crumb.name}
+                  </div>
+                </Link>
                 <img src="/icons/breadcrumb-arrow.svg" alt="right arrow" width={6}/>
               </>
             )

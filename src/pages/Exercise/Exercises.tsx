@@ -8,7 +8,7 @@ import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import Searchbar from '../../components/atoms/Searchbar';
 import Filter from '../../components/atoms/Filter';
-import ExerciseMobileCard from '../../components/molecules/ExerciseMobileCard';
+import ExerciseMobileCard from '../../components/molecules/ExerciseCard';
 
 interface SearchData {
   search: string;

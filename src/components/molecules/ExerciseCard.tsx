@@ -1,13 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface ExerciseMobileCardProps {
+interface ExerciseCardProps {
   id: number,
   number: number,
   name: string,
   difficulty: string
 };
 
-function ExerciseMobileCard(props: ExerciseMobileCardProps) {
+function ExerciseCard(props: ExerciseCardProps) {
   const { id, number, name, difficulty } = props;
   const route = `/exercises/${id}`;
 
@@ -34,22 +35,24 @@ function ExerciseMobileCard(props: ExerciseMobileCardProps) {
 
       <td>
         <div className='flex flex-col items-center px-2 py-2 gap-2'>
-          <a 
-            href={`${route}/edit`}
-            className='w-[70px] px-2 py-1 flex items-center justify-center border-2 border-[--orange] text-xs Poppins400 rounded-md text-[--orange]'
-          >
-            Edit
-          </a>
-          <a 
-            href={`${route}/result`}
-            className='w-[70px] px-2 py-1 flex items-center justify-center border-2 border-[--orange] text-xs Poppins400 rounded-md text-[--orange]'
-          >
-            Result
-          </a>
+          <Link to={`${route}/edit`}>
+            <span 
+              className='w-[70px] px-2 py-1 flex items-center justify-center border-2 border-[--orange] text-xs Poppins400 rounded-md text-[--orange]'
+            >
+              Edit
+            </span>
+          </Link>
+          <Link to={`${route}/result`}>
+            <span
+              className='w-[70px] px-2 py-1 flex items-center justify-center border-2 border-[--orange] text-xs Poppins400 rounded-md text-[--orange]'
+            >
+              Result
+            </span>
+          </Link>
         </div>
       </td>
     </tr>
   );
 };
 
-export default ExerciseMobileCard;
+export default ExerciseCard;
