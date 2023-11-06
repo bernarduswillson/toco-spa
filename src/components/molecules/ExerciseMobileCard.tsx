@@ -3,20 +3,12 @@ import React from 'react';
 interface ExerciseMobileCardProps {
   id: number,
   number: number,
-  language: string,
   name: string,
   difficulty: string
 };
 
-
-
-
-
-
-
-
 function ExerciseMobileCard(props: ExerciseMobileCardProps) {
-  const { id, number, language, name, difficulty } = props;
+  const { id, number, name, difficulty } = props;
   const route = `/exercises/${id}`;
 
   return (
