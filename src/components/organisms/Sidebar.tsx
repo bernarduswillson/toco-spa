@@ -61,8 +61,11 @@ const Sidebar = (props: SidebarProps) => {
           <ConfirmationModal
             title='Logout'
             message='You will be logged out from Toco'
+            ok='Logout'
+            cancel='Cancel'
             onCancel={handleCancel}
             onConfirm={handleConfirm}
+            warning
           />
         )
       }

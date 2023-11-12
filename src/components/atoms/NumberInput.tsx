@@ -1,21 +1,21 @@
 import React from 'react';
 
-interface TextInputProps {
+interface NumberInputProps {
   name: string;
-  value: string;
+  value: number;
   placeholder: string;
   label: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TextInput = (props: TextInputProps) => {
+const NumberInput = (props: NumberInputProps) => {
   const { name, value, placeholder, label, onChange } = props;
 
   return (
     <div className='flex flex-col gap-2 w-full'>
       <label className='Poppins600 text-xs text-[--blue]'>{label}</label>
       <input
-        type="text"
+        type="number"
         name={name}
         value={value}
         placeholder={placeholder}
@@ -26,4 +26,4 @@ const TextInput = (props: TextInputProps) => {
   );
 };
 
-export default TextInput;
+export default NumberInput;

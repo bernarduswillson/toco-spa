@@ -20,7 +20,7 @@ const Select = (props: SelectProps) => {
     <div className='flex flex-col gap-2 w-full'>
       <label className='Poppins600 text-xs text-[--blue]'>{label}</label>
       <select
-        className='Poppins400 text-sm border-2 font-normal border-gray-200 rounded-xl px-3 py-1 focus:outline-none' 
+        className='Poppins400 text-sm border-2 border-gray-200 rounded-xl px-3 py-1 focus:outline-none' 
         name={name}
         value={value}
         onChange={onChange}>

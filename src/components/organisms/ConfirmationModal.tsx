@@ -3,12 +3,15 @@ import React from 'react';
 interface ConfirmationModalProps {
   title: string,
   message: string,
+  ok: string,
+  cancel: string,
   onCancel: () => void,
   onConfirm: () => void
+  warning?: boolean
 };
 
 const ConfirmationModal = (props: ConfirmationModalProps) => {
-  const { title, message, onCancel, onConfirm } = props;
+  const { title, message, ok, cancel, onCancel, onConfirm, warning } = props;
   
   return (
     <div
@@ -21,14 +24,22 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
           <p className='Poppins500 text-sm'>{message}</p>
         </div>
         <div className='flex justify-center gap-3'>
-          <button
-            onClick={onCancel}
-            className='border-[--red] border-2 px-4 py-2 rounded-lg text-[--red] Poppins600 hover:bg-[--red] hover:text-white cursor-pointer'
-          >Cancel</button>
+          {
+            cancel ? (
+              <button
+                onClick={onCancel}
+                className={`${warning ? 'border-[--red] text-[--red] hover:bg-[--red] hover:text-white' : 'border-[--blue] text-[--blue]'} border-2 px-4 py-2 rounded-lg Poppins600 cursor-pointer`}
+              >
+                {cancel}
+                </button>
+                )
+              : (null)
+          }
+          
           <button
             onClick={onConfirm}
-            className='bg-[--red] px-4 py-2 rounded-lg text-white Poppins600 cursor-pointer'
-          >Logout</button>
+            className={`${warning ? 'bg-[--red]' : 'blue-purple-button'} px-4 py-2 rounded-lg text-white Poppins600 cursor-pointer`}
+          >{ok}</button>
         </div>
       </div>
     </div>
