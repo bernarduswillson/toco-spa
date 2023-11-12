@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import TextInput from '../../components/atoms/TextInput';
 import Select from '../../components/atoms/Select';
+
+interface ExerciseData {
+  exe_name: string;
+  category: string;
+  difficulty: string;
+  language: string;
+}
 
 const Create = () => {
   // URL Path ==============================
@@ -29,6 +36,26 @@ const Create = () => {
     },
   ];
   // =======================================
+
+  // Input values ==========================
+  const [exerciseData, setExerciseData] = useState<ExerciseData>({
+    exe_name: '',
+    category: '',
+    difficulty: '',
+    language: ''
+  });
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setExerciseData({ ...exerciseData, [name]: value });
+    console.log(exerciseData);
+  }
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+    setExerciseData({ ...exerciseData, [name]: value });
+    console.log(exerciseData);
+  }
   
   // Filter options ========================
   const difficultyOption = [
@@ -85,18 +112,30 @@ const Create = () => {
           {/* Meta */}
           <TextInput
             name='exe_name'
-            value=''
+            value={exerciseData.exe_name}
             placeholder='Exercise name'
             label='Exercise name'
+            onChange={handleInputChange}
           />
           <TextInput
             name='category'
-            value=''
+            value={exerciseData.category}
             placeholder='Category'
             label='Category'
+            onChange={handleInputChange}
           />
-          <Select label='Difficulty' name='difficulty' options={difficultyOption} />
-          <Select label='Language' name='language' options={languageOption} />
+          <Select
+            label='Difficulty'
+            name='difficulty'
+            value={exerciseData.difficulty}
+            options={difficultyOption}
+            onChange={handleSelectChange}/>
+          <Select
+            label='Language'
+            name='language'
+            value={exerciseData.language}
+            options={languageOption}
+            onChange={handleSelectChange}/>
 
           {/* Questions */}
         </div>
