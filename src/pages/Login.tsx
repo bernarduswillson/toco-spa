@@ -55,7 +55,7 @@ const Login: React.FC = () => {
       const response = await axios.post('http://localhost:5000/auth/login', data);
       
       if (response.status === 200) {
-        navigate('/');
+        navigate('/')
         Cookie.set('token', response.data.token);
       }
 

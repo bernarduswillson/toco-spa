@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import NavItem from '../atoms/NavItem';
@@ -61,8 +61,11 @@ const Sidebar = (props: SidebarProps) => {
           <ConfirmationModal
             title='Logout'
             message='You will be logged out from Toco'
+            ok='Logout'
+            cancel='Cancel'
             onCancel={handleCancel}
             onConfirm={handleConfirm}
+            warning
           />
         )
       }
@@ -84,7 +87,8 @@ const Sidebar = (props: SidebarProps) => {
           <div className="flex flex-col gap-4">
             {/* Logo */}
             <div className="h-[100px] w-full flex items-center border-white border-b-[2px]">
-              <a href="/" className='flex gap-3'>
+              <Link to='/'>
+                <div className='flex gap-3'>
                   <img 
                     src="/icons/logo.svg"
                     alt="Toco logo"
@@ -94,7 +98,8 @@ const Sidebar = (props: SidebarProps) => {
                     <span className='Poppins700 text-md text-[--white]'>Toco</span>
                     <span className='Poppins500 text-sm mt-[-5px] text-[--white]'>Admin</span>
                   </div>
-              </a>
+                </div>
+              </Link>
             </div>
 
             {/* Nav List */}
