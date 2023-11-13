@@ -42,13 +42,6 @@ function ExerciseCard(props: ExerciseCardProps) {
               Edit
             </span>
           </Link>
-          <Link to={`${route}/result`}>
-            <span
-              className='w-[70px] px-2 py-1 flex items-center justify-center border-2 border-[--orange] text-xs Poppins400 rounded-md text-[--orange]'
-            >
-              Result
-            </span>
-          </Link>
         </div>
       </td>
     </tr>

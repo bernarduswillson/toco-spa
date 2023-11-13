@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Cookie from 'js-cookie';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import TextInput from '../../components/atoms/TextInput';
-import NumberInput from '../../components/atoms/NumberInput';
 import Select from '../../components/atoms/Select';
 import QuestionForm from '../../components/molecules/QuestionForm';
 import ConfirmationModal from '../../components/organisms/ConfirmationModal';
@@ -26,11 +28,12 @@ interface ExerciseData {
   category: string;
   difficulty: string;
   language: string;
-  reward: number;
   questions: QuestionData[]
 };
 
 const Create = () => {
+  const navigate = useNavigate();
+
   // URL Path ==============================
   const urlPath = [
     {
@@ -59,9 +62,8 @@ const Create = () => {
   const [exerciseData, setExerciseData] = useState<ExerciseData>({
     exe_name: '',
     category: '',
-    difficulty: '',
-    language: '',
-    reward: 10,
+    difficulty: 'beginner',
+    language: 'english',
     questions: [
       {
         question_id: 0,
@@ -120,7 +122,6 @@ const Create = () => {
         } : question
       )
     }));
-    console.log(exerciseData);
   };
 
   // Option input type text handler
@@ -181,34 +182,34 @@ const Create = () => {
     const difficultyOption = [
       {
         option: 'Beginner',
-        value: 'beginner'
+        value: 'Beginner'
       },
       {
         option: 'Intermediate',
-        value: 'intermediate'
+        value: 'Intermediate'
       },
       {
         option: 'Advanced',
-        value: 'advanced'
+        value: 'Advanced'
       },
     ];
   
     const languageOption = [
       {
         option: 'English',
-        value: 'english'
+        value: '1'
       },
       {
         option: 'Indonesian',
-        value: 'indonesian'
+        value: '2'
       },
       {
         option: 'Francais',
-        value: 'francais'
+        value: '3'
       },
       {
         option: 'Deutsch',
-        value: 'deutsch'
+        value: '4'
       },
     ];
   // =======================================
@@ -309,8 +310,28 @@ const Create = () => {
   };
 
   // Handle release
-  const handleConfirmRelease = () => {
-    // post di sini
+  const handleConfirmRelease = async () => {
+    const token = Cookie.get('token');
+
+    try {
+      const exerciseResponse = await axios.post('http://localhost:5000/exercise/create', {
+        exe_name: exerciseData.exe_name,
+        language_id: 1, // Ini belum dinamis <------------
+        category: exerciseData.category,
+        difficulty: exerciseData.difficulty,
+        questions: exerciseData.questions
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (exerciseResponse.status === 200) {
+        navigate('/exercise')
+      }
+    } catch (error) {
+    }
   }
 
   // Handle cancel
@@ -324,7 +345,7 @@ const Create = () => {
       {
         isDeleteModalOpen && (
           <ConfirmationModal
-            title={`Delete question ${Number(deleteQuestionId) + 1}?`}
+            title={`Delete question?`}
             message='This action cannot be undone'
             ok='Delete'
             cancel='Cancel'
@@ -404,13 +425,6 @@ const Create = () => {
               value={exerciseData.language}
               options={languageOption}
               onChange={handleExerciseSelectChange}/>
-            <NumberInput
-              name='reward'
-              value={exerciseData.reward}
-              placeholder='Reward'
-              label='Reward'
-              onChange={handleExerciseInputChange}
-            />
           </div>
 
           {/* Questions Form */}
