@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Cookie from 'js-cookie';
+import useAuth from '../../hooks/useAuth';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -33,6 +33,8 @@ interface ExerciseData {
 
 const Create = () => {
   const navigate = useNavigate();
+  const { auth } = useAuth();
+  const token = auth.token;
 
   // URL Path ==============================
   const urlPath = [
@@ -311,8 +313,6 @@ const Create = () => {
 
   // Handle release
   const handleConfirmRelease = async () => {
-    const token = Cookie.get('token');
-
     try {
       const exerciseResponse = await axios.post('http://localhost:5000/exercise/create', {
         exe_name: exerciseData.exe_name,
