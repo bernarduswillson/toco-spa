@@ -2,13 +2,13 @@ import React from 'react';
 
 interface OptionData {
   option: string;
-  value: string;
+  value: string | number;
 };
 
 interface SelectProps {
   label: string;
   name: string;
-  value: string;
+  value: string | number;
   options: OptionData[];
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
