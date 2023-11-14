@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -9,7 +12,6 @@ import TextInput from '../../components/atoms/TextInput';
 import Select from '../../components/atoms/Select';
 import QuestionForm from '../../components/molecules/QuestionForm';
 import ConfirmationModal from '../../components/organisms/ConfirmationModal';
-import useAuth from '../../hooks/useAuth';
 
 interface OptionData {
   option_id: number;
@@ -61,11 +63,12 @@ const Edit = () => {
   // =======================================
 
   // Input values ==========================
+
   // Initial exercise data
   const [exerciseData, setExerciseData] = useState<ExerciseData>({
     exe_name: '',
     category: '',
-    difficulty: '',
+    difficulty: 'Beginner',
     language_id: 1,
     questions: [
       {
@@ -96,6 +99,47 @@ const Edit = () => {
       }
     ]
   });
+
+  // Validation
+  const [isDataValid, setIsDataValid] = useState<boolean>(true);
+
+  const isQuestionsValid = () => {
+    let result = true;
+    exerciseData.questions.forEach((question) => {
+        question.question &&
+        question.options &&
+        (
+          question.options[0].option &&
+          question.options[1].option &&
+          question.options[2].option &&
+          question.options[3].option
+        ) ? (
+          result = true  
+        ) : (
+          result = false
+        )
+    })
+    return result;
+  }
+
+  useEffect(() => {
+    console.log(exerciseData.exe_name &&
+      exerciseData.category &&
+      exerciseData.difficulty &&
+      exerciseData.language_id &&
+      exerciseData.questions &&
+      isQuestionsValid());
+    exerciseData.exe_name &&
+    exerciseData.category &&
+    exerciseData.difficulty &&
+    exerciseData.language_id &&
+    exerciseData.questions &&
+    isQuestionsValid() ? (
+      setIsDataValid(true)
+    ) : (
+      setIsDataValid(false)
+    )
+  }, [exerciseData]);
 
   // Fetch data
   useEffect(() => {
@@ -201,39 +245,54 @@ const Edit = () => {
   // =======================================
 
   // Filter options ========================
-    const difficultyOption = [
-      {
-        option: 'Beginner',
-        value: 'Beginner'
-      },
-      {
-        option: 'Intermediate',
-        value: 'Intermediate'
-      },
-      {
-        option: 'Advanced',
-        value: 'Advanced'
-      },
-    ];
+  const difficultyOption = [
+    {
+      option: 'Beginner',
+      value: 'Beginner'
+    },
+    {
+      option: 'Intermediate',
+      value: 'Intermediate'
+    },
+    {
+      option: 'Advanced',
+      value: 'Advanced'
+    },
+  ];
+
+  // Harus connect ke PHP
+  // Language Options
+  // const [languageOption, setLanguageOption] = useState([]);
+  // useEffect(() => {
+  //   const fetchLanguages = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:8008/api/endpoint/language.php');
+  //       // nnti lanjut
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+
+  //   }
+  // }, [])
   
-    const languageOption = [
-      {
-        option: 'English',
-        value: 1
-      },
-      {
-        option: 'Indonesian',
-        value: 2
-      },
-      {
-        option: 'Francais',
-        value: 3
-      },
-      {
-        option: 'Deutsch',
-        value: 4
-      },
-    ];
+  const languageOption = [
+    {
+      option: 'English',
+      value: 1
+    },
+    {
+      option: 'Indonesian',
+      value: 2
+    },
+    {
+      option: 'Francais',
+      value: 3
+    },
+    {
+      option: 'Deutsch',
+      value: 4
+    },
+  ];
   // =======================================
   
   // Add question ==========================
@@ -326,17 +385,32 @@ const Edit = () => {
   // Save exercise ======================
   const [isSaveModalOpen, setIsSaveModalOpen] = useState<boolean>(false);
   
-  // Release save button handler (opens confirmation modal)
+  // Save button handler (opens confirmation modal)
   const handleSaveExercise = () => {
     setIsSaveModalOpen(true);
   };
 
   // Handle save confirmed
   const handleConfirmSave = async () => {
+
+    if (!isDataValid) {
+      toast.error('Field cannot be empty!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
     try {
       await axios.put(`http://localhost:5000/exercise/update/${id}`, {
         exe_name: exerciseData.exe_name,
-        language_id: exerciseData.language_id, 
+        language_id: Number(exerciseData.language_id), 
         category: exerciseData.category,
         difficulty: exerciseData.difficulty,
         questions: exerciseData.questions
@@ -345,6 +419,17 @@ const Edit = () => {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+      });
+
+      toast.success('Successfully saved!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: "light",
       });
     } catch (error) {
       console.log(error);
@@ -363,30 +448,32 @@ const Edit = () => {
   // Handle delete exercise button handler (opens confirmation modal)
   const handleDeleteExercise = () => {
     setIsDeleteExerciseModalOpen(true);
-  }
+  };
 
   // Handle delete exercise confirmed
   const handleConfirmDeleteExercise = async () => {
     try {
       await axios.delete(`http://localhost:5000/exercise/delete/${id}`, {
         headers: {
-          Authorization: 'Bearer ' + token
+          Authorization: `Bearer ${token}`
         }
       });
       navigate('/exercise')
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   // Handle cancel
   const handleDeleteExerciseModalCancel = () => {
     setIsDeleteExerciseModalOpen(false);
-  }
+  };
   // =======================================
 
   return (
     <>
+      <ToastContainer />
+
       {
         isDeleteModalOpen && (
           <ConfirmationModal
@@ -480,7 +567,7 @@ const Edit = () => {
               onChange={handleExerciseSelectChange}/>
             <Select
               label='Language'
-              name='language'
+              name='language_id'
               value={exerciseData.language_id}
               options={languageOption}
               onChange={handleExerciseSelectChange}/>

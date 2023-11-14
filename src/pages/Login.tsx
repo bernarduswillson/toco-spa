@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import useAuth from '../hooks/useAuth';
-import useToken from '../hooks/useToken';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import useAuth from '../hooks/useAuth';
+import useToken from '../hooks/useToken';
 
 interface userData {
   name: string
   password: string
 };
 
+// Tuco artwork
+const tucoBg = {
+  backgroundImage: 'url("/images/tuco-artwork.png")',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center'
+};
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
+  const { encryptToken } = useToken();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<userData>({
     name: '',
     password: ''
   });
-  const { setAuth } = useAuth();
+  
+  // Input validation
   const [canLogin, setCanLogin] = useState(false);
-  const { encryptToken } = useToken();
-
-  // Handle can login
   useEffect(() => {
     if (formData.name && formData.password) {
       setCanLogin(true);
@@ -29,53 +36,48 @@ const Login: React.FC = () => {
     }
   }, [formData]);
   
-  // Tuco artwork
-  const tucoBg = {
-    backgroundImage: 'url("/images/tuco-artwork.png")',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-  };
-
+  // Form handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   // Login
-  const loginData = async (data: userData): Promise<void> => {
-    try {
-      setLoading(true);
-
-      const response = await axios.post('http://localhost:5000/auth/login', data);
-      
-      if (response.status === 200) {
-        const user = response.data.data.username;
-        const accessToken = response.data.token;
-        const role = 1052;
-
-        setAuth({
-          user: user,
-          token: accessToken,
-          role: role
-        });
-
-        encryptToken(JSON.stringify({
-          user: user,
-          token: accessToken,
-          role: role
-        }));
-
-        navigate('/');
+  const handleLogin = () => {
+    const postLoginData = async (data: userData): Promise<void> => {
+      try {
+        setLoading(true);
+  
+        const response = await axios.post('http://localhost:5000/auth/login', data);
+        
+        if (response.status === 200) {
+          const user = response.data.data.username;
+          const accessToken = response.data.token;
+          const role = 1052;
+  
+          setAuth({
+            user: user,
+            token: accessToken,
+            role: role
+          });
+  
+          encryptToken(JSON.stringify({
+            user: user,
+            token: accessToken,
+            role: role
+          }));
+  
+          navigate('/');
+        }
+  
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
       }
+    };
 
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  }
-
-  const handleLogin = (): void => {
-    void loginData(formData);
+    postLoginData(formData);
   };
 
   return (

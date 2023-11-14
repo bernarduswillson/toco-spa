@@ -44,7 +44,7 @@ const useToken = () => {
       user: null,
       token: null,
       role: 1573
-    })
+    });
   };
 
   return {

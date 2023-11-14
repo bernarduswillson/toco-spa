@@ -1,8 +1,8 @@
 import React, { useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cookie from 'js-cookie';
-import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -23,11 +23,9 @@ interface ExerciseData {
   language_id: number;
   category: string;
   difficulty: string;
-}
+};
 
 const Exercises = () => {
-  const { auth } = useAuth();
-  const token = auth.token;
 
   // URL Path ==============================
   const urlPath = [
@@ -102,23 +100,25 @@ const Exercises = () => {
   // =======================================
 
   // Exercise Data =========================
-  const [fetchLoading, setFetchLoading] = useState<boolean>(true);
   const [exerciseData, setExerciseData] = useState<ExerciseData[]>([]);
   useEffect(() => {
-    axios.get('http://localhost:5000/exercise/')
-      .then((response) => {
+    const fetchAllExercise = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/exercise/');
         setExerciseData(response.data.result);
-        setFetchLoading(false);
-      })
-      .catch((err) => {
-        console.log("Error euy");
-        setFetchLoading(false);
-      })
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchAllExercise();
   }, [])
   // =======================================
-
+  
   return (
     <div className='flex'>
+      <ToastContainer />
+
       {/* Sidebar */}
       <Sidebar active='Exercises'/>
 
@@ -165,7 +165,7 @@ const Exercises = () => {
                 <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
               </tr>
               {
-                !fetchLoading && exerciseData && exerciseData.map((exercise, number) => 
+                exerciseData && exerciseData.map((exercise, number) => 
                   <ExerciseMobileCard
                     key={number}
                     id={exercise.exercise_id}
