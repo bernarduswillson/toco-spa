@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
-import useCookie from '../hooks/useCookie';
+import useToken from '../hooks/useToken';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -18,7 +18,7 @@ const Login: React.FC = () => {
   });
   const { setAuth } = useAuth();
   const [canLogin, setCanLogin] = useState(false);
-  const { userdata, encryptCookie } = useCookie();
+  const { encryptToken } = useToken();
 
   // Handle can login
   useEffect(() => {
@@ -53,24 +53,18 @@ const Login: React.FC = () => {
         const accessToken = response.data.token;
         const role = 1052;
 
-        console.log("Login")
-        
         setAuth({
           user: user,
           token: accessToken,
           role: role
         });
 
-        console.log("Login")
-
-        encryptCookie(JSON.stringify({
+        encryptToken(JSON.stringify({
           user: user,
           token: accessToken,
           role: role
         }));
 
-        console.log("Login")
-        
         navigate('/');
       }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom'
-import useCookie from '../hooks/useCookie';
 import useAuth from '../hooks/useAuth';
 
 interface requireAuthProps {
@@ -9,16 +8,15 @@ interface requireAuthProps {
 
 const RequireAuth = ( props: requireAuthProps ) => {
     const { allowedRole } = props;
-    const { userdata } = useCookie();
-    const { setAuth } = useAuth();
+    const { auth } = useAuth();
 
-    setAuth(userdata);
-    
+    console.log(auth);
+
     return(
-      userdata?.role === allowedRole ? (
+      auth?.role === allowedRole ? (
         <Outlet />
       ) : (
-        userdata?.user ? (
+        auth?.user ? (
           <Navigate to="/" replace/>
         ) : (
           <Navigate to="/login" replace/>

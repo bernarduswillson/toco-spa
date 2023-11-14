@@ -26,10 +26,11 @@ const App = () => {
 
         {/* Admin only routes */}
         <Route element={<RequireAuth allowedRole={ROLES.admin}/>}>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home />} >
           <Route path="exercise" element={<Exercises />} />
           <Route path="exercise/create" element={<Create />} />
           <Route path="exercise/:id" element={<Edit />} />
+          </Route>
         </Route>
         
       </Route>
