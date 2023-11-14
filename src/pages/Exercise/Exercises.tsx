@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookie from 'js-cookie';
+import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -25,16 +26,8 @@ interface ExerciseData {
 }
 
 const Exercises = () => {
-  const navigate = useNavigate();
-  const token = Cookie.get('token');
-
-  // Token validation ======================
-  useEffect(() => {
-    if (!token) {
-      navigate('/login');
-    }
-  }, [token, navigate]);
-  // =======================================
+  const { auth } = useAuth();
+  const token = auth.token;
 
   // URL Path ==============================
   const urlPath = [
@@ -162,24 +155,27 @@ const Exercises = () => {
         {/* Records */}
         <div className='w-full max-w-[920px] flex flex-col gap-2'>
           <table className='min-w-full divide-y divide-gray-400'>
-            <tr className=''>
-              <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>No</th>
-              <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Lang</th>
-              <th className='lg:hidden bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Details</th>
-              <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Name</th>
-              <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Difficulty</th>
-              <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
-            </tr>
-            {
-              !fetchLoading && exerciseData && exerciseData.map((exercise, number) => 
-                <ExerciseMobileCard
-                  id={exercise.exercise_id}
-                  number={number + 1}
-                  name={exercise.exe_name}
-                  difficulty={exercise.difficulty}
-                />
-              )
-            }
+            <tbody>
+              <tr className=''>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>No</th>
+                <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Lang</th>
+                <th className='lg:hidden bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Details</th>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Name</th>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Difficulty</th>
+                <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
+              </tr>
+              {
+                !fetchLoading && exerciseData && exerciseData.map((exercise, number) => 
+                  <ExerciseMobileCard
+                    key={number}
+                    id={exercise.exercise_id}
+                    number={number + 1}
+                    name={exercise.exe_name}
+                    difficulty={exercise.difficulty}
+                  />
+                )
+              }
+            </tbody>
           </table>
 
         </div>

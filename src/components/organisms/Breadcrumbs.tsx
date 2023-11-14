@@ -18,10 +18,10 @@ const Breadcrumbs = (props: urlPathProps) => {
   return (
     <div className='w-full flex flex-wrap items-center gap-2'>
       {
-        urlPath.map((crumb) => {
+        urlPath.map((crumb, i) => {
           if (crumb.active) {
             return (
-              <Link to={crumb.url}>
+              <Link to={crumb.url} key={i}>
                 <div className='Poppins400 text-[--orange] text-xs px-2 py-1 rounded-md flex items-center hover:bg-slate-200'>
                 {crumb.name}
                 </div>
@@ -30,7 +30,7 @@ const Breadcrumbs = (props: urlPathProps) => {
           } else {
             return (
               <>
-                <Link to={crumb.url}>
+                <Link to={crumb.url} key={i}>
                   <div className='Poppins400 text-[--grey] text-xs px-2 py-1 rounded-md flex items-center hover:bg-slate-200'>
                     {crumb.name}
                   </div>

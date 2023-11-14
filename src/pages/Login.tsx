@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import useCookie from '../hooks/useCookie';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Cookie from 'js-cookie';
 
 interface userData {
   name: string
@@ -11,20 +12,13 @@ interface userData {
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const token = Cookie.get('token');
   const [formData, setFormData] = useState<userData>({
     name: '',
     password: ''
   });
-
+  const { setAuth } = useAuth();
   const [canLogin, setCanLogin] = useState(false);
-
-  // Token validation
-  useEffect(() => {
-    if (token) {
-      navigate('/');
-    }
-  }, [token, navigate]);
+  const { userdata, encryptCookie } = useCookie();
 
   // Handle can login
   useEffect(() => {
@@ -55,8 +49,29 @@ const Login: React.FC = () => {
       const response = await axios.post('http://localhost:5000/auth/login', data);
       
       if (response.status === 200) {
-        navigate('/')
-        Cookie.set('token', response.data.token);
+        const user = response.data.data.username;
+        const accessToken = response.data.token;
+        const role = 1052;
+
+        console.log("Login")
+        
+        setAuth({
+          user: user,
+          token: accessToken,
+          role: role
+        });
+
+        console.log("Login")
+
+        encryptCookie(JSON.stringify({
+          user: user,
+          token: accessToken,
+          role: role
+        }));
+
+        console.log("Login")
+        
+        navigate('/');
       }
 
       setLoading(false);
@@ -120,16 +135,6 @@ const Login: React.FC = () => {
                     Login
                   </button>
                 )}
-            </div>
-            <div className='Poppins300 text-center text-grey underline'>
-              <Link to='/register'>
-                Dont have an account yet? Register here
-              </Link>
-            </div>
-            <div className='Poppins300 text-center text-grey underline'>
-              <Link to='/'>
-                Forgot password?
-              </Link>
             </div>
           </div>
         </div>

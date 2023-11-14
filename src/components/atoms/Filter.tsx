@@ -18,8 +18,8 @@ function Filter(props: FilterProps) {
       className='border-2 border-gray-400 text-gray-400 Poppins400 px-3 py-1 rounded-md w-full focus:outline-none' 
       name={name}>
       {
-        options.map((option) =>
-          <option value={option.value}>{option.option}</option>
+        options.map((option, i) =>
+          <option key={i} value={option.value}>{option.option}</option>
         )
       }
     </select>

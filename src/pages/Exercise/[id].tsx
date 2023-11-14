@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Cookie from 'js-cookie';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -10,6 +9,7 @@ import TextInput from '../../components/atoms/TextInput';
 import Select from '../../components/atoms/Select';
 import QuestionForm from '../../components/molecules/QuestionForm';
 import ConfirmationModal from '../../components/organisms/ConfirmationModal';
+import useAuth from '../../hooks/useAuth';
 
 interface OptionData {
   option_id: number;
@@ -34,6 +34,8 @@ interface ExerciseData {
 const Edit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { auth } = useAuth();
+  const token = auth.token;
 
   // URL Path ==============================
   const urlPath = [
@@ -101,7 +103,7 @@ const Edit = () => {
       try {
         const response = await axios.get(`http://localhost:5000/exercise/${id}`, {
           headers: {
-            Authorization: `Bearer ${Cookie.get('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -112,7 +114,7 @@ const Edit = () => {
     }
 
     fetchExerciseData();
-  }, []);
+  }, [id, token]);
   
   // Exercise input type text handler
   const handleExerciseInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -331,8 +333,6 @@ const Edit = () => {
 
   // Handle save confirmed
   const handleConfirmSave = async () => {
-    const token = Cookie.get('token');
-
     try {
       await axios.put(`http://localhost:5000/exercise/update/${id}`, {
         exe_name: exerciseData.exe_name,
@@ -370,7 +370,7 @@ const Edit = () => {
     try {
       await axios.delete(`http://localhost:5000/exercise/delete/${id}`, {
         headers: {
-          Authorization: 'Bearer ' + Cookie.get('token')
+          Authorization: 'Bearer ' + token
         }
       });
       navigate('/exercise')
