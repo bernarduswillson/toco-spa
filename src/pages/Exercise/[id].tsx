@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookie from 'js-cookie';
 
@@ -33,6 +33,7 @@ interface ExerciseData {
 
 const Edit = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // URL Path ==============================
   const urlPath = [
@@ -320,22 +321,22 @@ const Edit = () => {
   }
   // =======================================
 
-  // Release exercise ======================
+  // Save exercise ======================
   const [isSaveModalOpen, setIsSaveModalOpen] = useState<boolean>(false);
   
-  // Release exercise button handler (opens confirmation modal)
+  // Release save button handler (opens confirmation modal)
   const handleSaveExercise = () => {
     setIsSaveModalOpen(true);
   };
 
-  // Handle release
+  // Handle save confirmed
   const handleConfirmSave = async () => {
     const token = Cookie.get('token');
 
     try {
       await axios.put(`http://localhost:5000/exercise/update/${id}`, {
         exe_name: exerciseData.exe_name,
-        language_id: exerciseData.language_id, // Ini belum dinamis <------------
+        language_id: exerciseData.language_id, 
         category: exerciseData.category,
         difficulty: exerciseData.difficulty,
         questions: exerciseData.questions
@@ -346,12 +347,41 @@ const Edit = () => {
         },
       });
     } catch (error) {
+      console.log(error);
     }
   }
 
   // Handle cancel
   const handleSaveModalCancel = () => {
     setIsSaveModalOpen(false);
+  }
+  // =======================================
+  
+  // Delete exercise =======================
+  const [isDeleteExerciseModalOpen, setIsDeleteExerciseModalOpen] = useState<boolean>(false);
+  
+  // Handle delete exercise button handler (opens confirmation modal)
+  const handleDeleteExercise = () => {
+    setIsDeleteExerciseModalOpen(true);
+  }
+
+  // Handle delete exercise confirmed
+  const handleConfirmDeleteExercise = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/exercise/delete/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + Cookie.get('token')
+        }
+      });
+      navigate('/exercise')
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Handle cancel
+  const handleDeleteExerciseModalCancel = () => {
+    setIsDeleteExerciseModalOpen(false);
   }
   // =======================================
 
@@ -380,6 +410,20 @@ const Edit = () => {
             cancel='Cancel'
             onCancel={handleSaveModalCancel}
             onConfirm={handleConfirmSave}
+          />
+        )
+      }
+
+      {
+        isDeleteExerciseModalOpen && (
+          <ConfirmationModal
+            title='Delete exercise?'
+            message='Are you sure you want to delete this exercise? This action cannot be undone'
+            ok='Delete'
+            cancel='Cancel'
+            onCancel={handleDeleteExerciseModalCancel}
+            onConfirm={handleConfirmDeleteExercise}
+            warning
           />
         )
       }
@@ -468,20 +512,26 @@ const Edit = () => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-4 w-full">
-            <Link to='/exercise'>
-              <button
-                className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
-              >
-                Back
-              </button>
-            </Link>
+          <div className="flex flex-col sm:flex-row-reverse justify-center gap-4 w-full">
             <button
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
               onClick={handleSaveExercise}
             >
               Save Exercise
             </button>
+            <button
+              className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
+              onClick={handleDeleteExercise}
+            >
+              Delete
+            </button>
+            <Link to='/exercise'>
+              <button
+                className='w-full Poppins400 bg-white border-2 border-[--red] text-[--red] px-12 py-3 rounded-md'
+              >
+                Back
+              </button>
+            </Link>
           </div>
         </div>
       </div>
