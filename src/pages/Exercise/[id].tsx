@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Cookie from 'js-cookie';
 
@@ -31,8 +31,8 @@ interface ExerciseData {
   questions: QuestionData[]
 };
 
-const Create = () => {
-  const navigate = useNavigate();
+const Edit = () => {
+  const { id } = useParams();
 
   // URL Path ==============================
   const urlPath = [
@@ -50,8 +50,8 @@ const Create = () => {
     },
     {
       id: 2,
-      name: "New",
-      url: "/exercise/new",
+      name: "Edit",
+      url: `/exercise/${id}`,
       active: true
     },
   ];
@@ -93,6 +93,25 @@ const Create = () => {
       }
     ]
   });
+
+  // Fetch data
+  useEffect(() => {
+    const fetchExerciseData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/exercise/${id}`, {
+          headers: {
+            Authorization: `Bearer ${Cookie.get('token')}`,
+          },
+        });
+
+        setExerciseData(response.data.result);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchExerciseData();
+  }, []);
   
   // Exercise input type text handler
   const handleExerciseInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -215,31 +234,31 @@ const Create = () => {
   // =======================================
   
   // Add question ==========================
-  const [questionCount, setQuestionCount] = useState<number>(1);
+  const [questionCountNegative, setQuestionCountNegative] = useState<number>(-1);
 
   // Add question button handler
   const handleAddQuestion = () => {
     const defaultQuestion = {
-      question_id: questionCount,
+      question_id: questionCountNegative,
       question: "",
       options: [
         {
-          option_id: 0,
+          option_id: -1,
           option: "",
           is_correct: false
         },
         {
-          option_id: 1,
+          option_id: -2,
           option: "",
           is_correct: false
         },
         {
-          option_id: 2,
+          option_id: -3,
           option: "",
           is_correct: false
         },
         {
-          option_id: 3,
+          option_id: -4,
           option: "",
           is_correct: false
         },
@@ -251,7 +270,7 @@ const Create = () => {
       questions: [...prevData.questions, defaultQuestion]
     }));
 
-    setQuestionCount((prev) => prev + 1);
+    setQuestionCountNegative((prev) => prev - 1);
   };
   // =======================================
   
@@ -302,19 +321,19 @@ const Create = () => {
   // =======================================
 
   // Release exercise ======================
-  const [isReleaseModalOpen, setIsReleaseModalOpen] = useState<boolean>(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState<boolean>(false);
   
   // Release exercise button handler (opens confirmation modal)
-  const handleReleaseExercise = () => {
-    setIsReleaseModalOpen(true);
+  const handleSaveExercise = () => {
+    setIsSaveModalOpen(true);
   };
 
   // Handle release
-  const handleConfirmRelease = async () => {
+  const handleConfirmSave = async () => {
     const token = Cookie.get('token');
 
     try {
-      const exerciseResponse = await axios.post('http://localhost:5000/exercise/create', {
+      await axios.put(`http://localhost:5000/exercise/update/${id}`, {
         exe_name: exerciseData.exe_name,
         language_id: exerciseData.language_id, // Ini belum dinamis <------------
         category: exerciseData.category,
@@ -326,17 +345,13 @@ const Create = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-      
-      if (exerciseResponse.status === 200) {
-        navigate('/exercise')
-      }
     } catch (error) {
     }
   }
 
   // Handle cancel
-  const handleReleaseModalCancel = () => {
-    setIsReleaseModalOpen(false);
+  const handleSaveModalCancel = () => {
+    setIsSaveModalOpen(false);
   }
   // =======================================
 
@@ -357,14 +372,14 @@ const Create = () => {
       }
 
       {
-        isReleaseModalOpen && (
+        isSaveModalOpen && (
           <ConfirmationModal
-            title='Release exercise?'
-            message='Are you sure you want to release this exercise?'
-            ok='Release'
+            title='Save changes?'
+            message='Are you sure you want to save changes to this exercise?'
+            ok='Save'
             cancel='Cancel'
-            onCancel={handleReleaseModalCancel}
-            onConfirm={handleConfirmRelease}
+            onCancel={handleSaveModalCancel}
+            onConfirm={handleConfirmSave}
           />
         )
       }
@@ -393,7 +408,7 @@ const Create = () => {
           {/* Header */}
           <div className="flex flex-col w-full max-w-[920px]">
             <Breadcrumbs urlPath={urlPath} />
-            <PageTitle text='New Exercise'/>
+            <PageTitle text='Edit Exercise'/>
           </div>
 
           {/* Exercise Form */}
@@ -454,11 +469,18 @@ const Create = () => {
           </div>
 
           <div className="flex justify-center gap-4 w-full">
+            <Link to='/exercise'>
+              <button
+                className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
+              >
+                Back
+              </button>
+            </Link>
             <button
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
-              onClick={handleReleaseExercise}
+              onClick={handleSaveExercise}
             >
-              Release Exercise
+              Save Exercise
             </button>
           </div>
         </div>
@@ -467,4 +489,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Edit;

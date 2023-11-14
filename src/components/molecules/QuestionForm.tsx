@@ -53,6 +53,7 @@ const QuestionForm = (props: QuestionFormProps) => {
                     value={option.option_id}
                     className='h-4 w-4 cursor-pointer appearance-none rounded-full border border-[--orange] transition-all checked:bg-[--orange]'
                     onChange={optionRadioChange}
+                    checked={option.is_correct}
                   />
                   <input
                     type='text'

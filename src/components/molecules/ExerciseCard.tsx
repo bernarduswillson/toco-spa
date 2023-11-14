@@ -10,7 +10,7 @@ interface ExerciseCardProps {
 
 function ExerciseCard(props: ExerciseCardProps) {
   const { id, number, name, difficulty } = props;
-  const route = `/exercises/${id}`;
+  const route = `/exercise/${id}`;
 
   return (
     <tr>
@@ -35,7 +35,7 @@ function ExerciseCard(props: ExerciseCardProps) {
 
       <td>
         <div className='flex flex-col items-center px-2 py-2 gap-2'>
-          <Link to={`${route}/edit`}>
+          <Link to={`${route}`}>
             <span 
               className='w-[70px] px-2 py-1 flex items-center justify-center border-2 border-[--orange] text-xs Poppins400 rounded-md text-[--orange]'
             >
