@@ -61,6 +61,18 @@ const Create = () => {
 
   // Fetch data
   useEffect(() => {
+    const validateMerchandiseId = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/merch/validate/${id}`);
+        if (!response.data.result) {
+          navigate('/404');
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const fetchMerchandiseData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/merch/${id}`);
@@ -69,9 +81,9 @@ const Create = () => {
       } catch (error) {
         console.log(error);
       }
-    } 
+    };
 
-    fetchMerchandiseData();
+    validateMerchandiseId().then(fetchMerchandiseData);
   }, [id])
   
    // Validation

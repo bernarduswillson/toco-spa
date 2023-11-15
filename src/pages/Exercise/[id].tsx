@@ -144,6 +144,18 @@ const Edit = () => {
 
   // Fetch data
   useEffect(() => {
+    const validateExerciseId = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/exercise/validate/${id}`);
+        if (!response.data.result) {
+          navigate('/404');
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const fetchExerciseData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/exercise/${id}`, {
@@ -158,7 +170,7 @@ const Edit = () => {
       }
     }
 
-    fetchExerciseData();
+    validateExerciseId().then(fetchExerciseData);
   }, [id, token]);
   
   // Exercise input type text handler

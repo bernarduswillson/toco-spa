@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import RequireAuth from './pages/RequireAuth';
 import Layout from './pages/Layout';
+import NotFound from './pages/NotFound';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Exercises from './pages/Exercise/Exercises';
@@ -39,6 +40,8 @@ const App = () => {
           <Route path="merchandise/create" element={<MerchCreate />} />
           <Route path="merchandise/:id" element={<MerchEdit />} />
         </Route>
+
+        <Route path='/*' element={<NotFound />} />
         
       </Route>
     </Routes>
