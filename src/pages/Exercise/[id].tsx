@@ -604,7 +604,7 @@ const Edit = () => {
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
               onClick={handleSaveExercise}
             >
-              Save Exercise
+              Save changes
             </button>
             <button
               className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
