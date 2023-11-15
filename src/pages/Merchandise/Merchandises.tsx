@@ -6,8 +6,7 @@ import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import Searchbar from '../../components/atoms/Searchbar';
-import Filter from '../../components/atoms/Filter';
-import ExerciseMobileCard from '../../components/molecules/ExerciseCard';
+import MerchCard from '../../components/molecules/MerchCard';
 
 interface SearchData {
   search: string;
@@ -15,15 +14,15 @@ interface SearchData {
   language: string;
 }
 
-interface ExerciseData {
-  exercise_id: number;
-  exe_name: string;
-  language_id: number;
-  category: string;
-  difficulty: string;
+interface MerchandiseData {
+  merchandise_id: number;
+  name: string;
+  price: number;
+  image: string;
+  desc: string;
 };
 
-const Exercises = () => {
+const Merchandises = () => {
 
   // URL Path ==============================
   const urlPath = [
@@ -35,8 +34,8 @@ const Exercises = () => {
     },
     {
       id: 1,
-      name: "Exercises",
-      url: "/exercise",
+      name: "Merchandises",
+      url: "/merchandises",
       active: true
     },
   ];
@@ -61,62 +60,26 @@ const Exercises = () => {
   }
   // =======================================
   
-  // Filter options ========================
-  const difficultyOption = [
-    {
-      option: 'Beginner',
-      value: 'beginner'
-    },
-    {
-      option: 'Intermediate',
-      value: 'intermediate'
-    },
-    {
-      option: 'Advanced',
-      value: 'advanced'
-    },
-  ];
-
-  const languageOption = [
-    {
-      option: 'English',
-      value: 'english'
-    },
-    {
-      option: 'Indonesian',
-      value: 'indonesian'
-    },
-    {
-      option: 'Francais',
-      value: 'francais'
-    },
-    {
-      option: 'Deutsch',
-      value: 'deutsch'
-    },
-  ];
-  // =======================================
-
   // Exercise Data =========================
-  const [exerciseData, setExerciseData] = useState<ExerciseData[]>([]);
+  const [merchandiseData, setMerchandiseData] = useState<MerchandiseData[]>([]);
   useEffect(() => {
-    const fetchAllExercise = async () => {
+    const fetchAllMerchandise = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/exercise/');
-        setExerciseData(response.data.result);
+        const response = await axios.get('http://localhost:5000/merch/');
+        setMerchandiseData(response.data.result);
       } catch (error) {
         console.log(error);
       }
-    }
+    };
 
-    fetchAllExercise();
+    fetchAllMerchandise();
   }, [])
   // =======================================
   
   return (
     <div className='flex'>
       {/* Sidebar */}
-      <Sidebar active='Exercises'/>
+      <Sidebar active='Merchandise'/>
 
       {/* Main content */}
       <div className='min-h-screen w-full py-5 lg:py-20 xl:py-28 pr-5 pl-28 flex flex-col gap-9 items-center'>
@@ -124,7 +87,7 @@ const Exercises = () => {
         {/* Header */}
         <div className="flex flex-col w-full max-w-[920px]">
           <Breadcrumbs urlPath={urlPath} />
-          <PageTitle text='Exercises' create createUrl='/exercise/create'/>
+          <PageTitle text='Merchandises' create createUrl='/merchandise/create'/>
         </div>
 
         {/* Search and Filter */}
@@ -133,11 +96,6 @@ const Exercises = () => {
             <div className='flex flex-col gap-2 w-full lg:flex-row'>
               <Searchbar onChange={handleSearchChange} />
               
-              <div className='w-full flex gap-2'>
-                <Filter name='language' options={languageOption} />
-                <Filter name='difficulty' options={difficultyOption} />
-              </div>
-
               <button
                 type='submit'
                 className='bg-[--orange] text-white Poppins400 px-10 py-1 rounded-md w-full lg:w-fit'
@@ -154,20 +112,23 @@ const Exercises = () => {
             <tbody>
               <tr className=''>
                 <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>No</th>
-                <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Lang</th>
+                <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Image</th>
                 <th className='lg:hidden bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Details</th>
                 <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Name</th>
-                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Difficulty</th>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Price</th>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Description</th>
                 <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
               </tr>
               {
-                exerciseData && exerciseData.map((exercise, number) => 
-                  <ExerciseMobileCard
+                merchandiseData && merchandiseData.map((merch, number) => 
+                  <MerchCard
                     key={number}
-                    id={exercise.exercise_id}
+                    id={merch.merchandise_id}
                     number={number + 1}
-                    name={exercise.exe_name}
-                    difficulty={exercise.difficulty}
+                    name={merch.name}
+                    desc={merch.desc}
+                    image={merch.image}
+                    price={merch.price}
                   />
                 )
               }
@@ -180,4 +141,4 @@ const Exercises = () => {
   );
 };
 
-export default Exercises;
+export default Merchandises;

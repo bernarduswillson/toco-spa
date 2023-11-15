@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Exercises from './pages/Exercise/Exercises';
 import Create from './pages/Exercise/Create';
 import Edit from './pages/Exercise/[id]';
+import Merchandises from './pages/Merchandise/Merchandises';
 
 const ROLES = {
   guest: 1573,
@@ -27,9 +28,12 @@ const App = () => {
         {/* Admin only routes */}
         <Route element={<RequireAuth allowedRole={ROLES.admin}/>}>
           <Route path="/" element={<Home />} />
+
           <Route path="exercise" element={<Exercises />} />
           <Route path="exercise/create" element={<Create />} />
           <Route path="exercise/:id" element={<Edit />} />
+          
+          <Route path="merchandise" element={<Merchandises />} />
         </Route>
         
       </Route>

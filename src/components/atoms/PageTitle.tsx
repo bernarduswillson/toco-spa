@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 interface PageTitleProps {
   text: string;
   create?: boolean;
+  createUrl?: string;
 }
 
 const PageTitle = (props: PageTitleProps) => {
-  const { text, create } = props;
+  const { text, create, createUrl } = props;
 
   return (
     <div className="w-full flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
@@ -15,9 +16,9 @@ const PageTitle = (props: PageTitleProps) => {
         {text}
       </h1>
       {
-        create ? 
+        create && createUrl ? 
         (
-          <Link to="/exercise/create">
+          <Link to={createUrl}>
             <span
               className='Poppins400 text-xs text-white px-2 py-2 bg-[--orange] rounded-md w-fit h-fit cursor-pointer'
             >
