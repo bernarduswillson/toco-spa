@@ -14,7 +14,7 @@ import FileInput from '../../components/atoms/FileInput';
 
 interface MerchandiseData {
   merchandise_id: number,
-  image: string,
+  image: File | undefined,
   name: string,
   price: number,
   desc: string
@@ -52,12 +52,11 @@ const Create = () => {
   // Input values ==========================
   const [merchandiseData, setMerchandiseData] = useState<MerchandiseData>({
     merchandise_id: 0,
-    image: 'merchandise.jpg',
+    image: undefined,
     name: '',
     price: 10,
     desc: ''
   });
-  const [image, setImage] = useState<File>();
   
   // Validation
   const [isDataValid, setIsDataValid] = useState<boolean>(true);
@@ -66,13 +65,12 @@ const Create = () => {
     merchandiseData.image &&
     merchandiseData.name &&
     merchandiseData.price > 0 &&
-    merchandiseData.desc &&
-    image ? (
+    merchandiseData.desc? (
       setIsDataValid(true)
     ) : (
       setIsDataValid(false)
     )
-  }, [merchandiseData, image]);
+  }, [merchandiseData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -82,8 +80,8 @@ const Create = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
-      setImage(e.target.files[0]);
-    };
+      setMerchandiseData({ ...merchandiseData, image: e.target.files[0]})
+    };;
   };
   // =======================================
   
@@ -102,29 +100,28 @@ const Create = () => {
   // Handle release
   const handleConfirmRelease = async () => {
     const postMerchandiseData = async () => {
-      const formData = new FormData();
-      if (image) {
-        formData.append('image', image);
-      } else {
-      }
+      // const formData = new FormData();
+      // if (merchandiseData.image) {
+      //   formData.append('image', merchandiseData.image);
+      // }
 
       if (!isDataValid) {
         showToast('Field cannot be empty!', 'error');
         return;
       }
 
-      try {
-        const response = await axios.post('http://localhost:5000/image/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`,
-          }
-        });
+      // try {
+      //   const response = await axios.post('http://localhost:5000/image/upload', formData, {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //       'Authorization': `Bearer ${token}`,
+      //     }
+      //   });
         
-      } catch (error) {
-        console.log(error);
-        return;
-      }
+      // } catch (error) {
+      //   console.log(error);
+      //   return;
+      // }
 
       try {
         await axios.post('http://localhost:5000/merch/create', {
@@ -134,6 +131,7 @@ const Create = () => {
           image: merchandiseData.image,
         }, {
           headers: {
+            'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`,
           },
         });
