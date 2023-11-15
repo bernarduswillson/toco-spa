@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
-import { ToastContainer, toast } from 'react-toastify';
+import useToast from '../../hooks/useToast';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -24,6 +24,7 @@ const Create = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { auth } = useAuth();
+  const { showToast } = useToast();
   const token = auth.token;
 
   // URL Path ==============================
@@ -116,16 +117,7 @@ const Create = () => {
   // Handle release
   const handleConfirmRelease = async () => {
     if (!isDataValid) {
-      toast.error('Field cannot be empty!' , {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast('Field cannot be empty!', 'error');
       return;
     }
 
@@ -141,16 +133,7 @@ const Create = () => {
         },
       });
 
-      toast.success('Update successful!' , {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast('Update successful', 'success');
 
     } catch (error) {
       console.log(error);
@@ -166,6 +149,7 @@ const Create = () => {
         },
       });
 
+      showToast('Delete successful', 'success');
       navigate('/merchandise');
     } catch (error) {
       console.log(error);
@@ -175,8 +159,6 @@ const Create = () => {
 
   return (
     <>
-      <ToastContainer />
-
       {
         isReleaseModalOpen && (
           <ConfirmationModal

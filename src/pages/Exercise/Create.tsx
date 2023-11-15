@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
-import { ToastContainer, toast } from 'react-toastify';
+import useToast from '../../hooks/useToast';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -36,6 +36,7 @@ interface ExerciseData {
 const Create = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
+  const { showToast } = useToast();
   const token = auth.token;
 
   // URL Path ==============================
@@ -367,16 +368,7 @@ const Create = () => {
   // Handle release
   const handleConfirmRelease = async () => {
     if (!isDataValid) {
-      toast.error('Field cannot be empty!' , {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast('Field cannot be empty!', 'error');
       return;
     }
 
@@ -395,6 +387,7 @@ const Create = () => {
       });
       
       if (exerciseResponse.status === 200) {
+        showToast('Release successful!', 'success');
         navigate('/exercise');
       }
     } catch (error) {
@@ -410,8 +403,6 @@ const Create = () => {
 
   return (
     <>
-      <ToastContainer />
-
       {
         isDeleteModalOpen && (
           <ConfirmationModal

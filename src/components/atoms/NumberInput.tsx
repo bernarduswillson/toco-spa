@@ -21,6 +21,8 @@ const NumberInput = (props: NumberInputProps) => {
         placeholder={placeholder}
         className='Poppins400 text-sm border-2 border-gray-200 rounded-xl px-3 py-2 focus:outline-none'
         onChange={onChange}
+        autoComplete='false'
+        autoCorrect='false'
       />
     </div>
   );

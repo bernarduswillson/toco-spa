@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import useToast from '../../hooks/useToast';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -37,6 +37,7 @@ const Edit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { auth } = useAuth();
+  const { showToast } = useToast();
   const token = auth.token;
 
   // URL Path ==============================
@@ -394,16 +395,7 @@ const Edit = () => {
   const handleConfirmSave = async () => {
 
     if (!isDataValid) {
-      toast.error('Field cannot be empty!', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast('Field cannot be empty!', 'error');
       return;
     }
 
@@ -421,16 +413,7 @@ const Edit = () => {
         },
       });
 
-      toast.success('Successfully saved!', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast('Successfully saved!', 'success');
     } catch (error) {
       console.log(error);
     }
@@ -458,6 +441,7 @@ const Edit = () => {
           Authorization: `Bearer ${token}`
         }
       });
+      showToast('Delete successful!', 'success');
       navigate('/exercise')
     } catch (error) {
       console.log(error);
@@ -472,8 +456,6 @@ const Edit = () => {
 
   return (
     <>
-      <ToastContainer />
-
       {
         isDeleteModalOpen && (
           <ConfirmationModal
