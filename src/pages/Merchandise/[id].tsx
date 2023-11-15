@@ -103,6 +103,13 @@ const Create = () => {
     setIsReleaseModalOpen(false);
   };
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const handleDelete = () => {
+    setIsDeleteModalOpen(true);
+  }
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+  }
   // =======================================
   
   // Submit ================================
@@ -149,6 +156,21 @@ const Create = () => {
       console.log(error);
     }
   }
+
+  // Handle delete
+  const handleConfirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/merch/delete/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      navigate('/merchandise');
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // =======================================
 
   return (
@@ -164,6 +186,19 @@ const Create = () => {
             cancel='Cancel'
             onCancel={handleCancelRelease}
             onConfirm={handleConfirmRelease}
+          />
+        )
+      }
+      {
+        isDeleteModalOpen && (
+          <ConfirmationModal
+            title='Delete exercise?'
+            message='Are you sure you want to delete this exercise This action cannot be undone?'
+            ok='Delete'
+            cancel='Cancel'
+            onCancel={handleCancelDelete}
+            onConfirm={handleConfirmDelete}
+            warning
           />
         )
       }
@@ -214,6 +249,12 @@ const Create = () => {
               onClick={handleRelease}
             >
               Save changes
+            </button>
+            <button
+              className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
+              onClick={handleDelete}
+            >
+              Delete
             </button>
             <Link to='/merchandise'>
               <button
