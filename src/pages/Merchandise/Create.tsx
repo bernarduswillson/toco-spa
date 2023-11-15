@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
-import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -11,10 +10,11 @@ import PageTitle from '../../components/atoms/PageTitle';
 import TextInput from '../../components/atoms/TextInput';
 import NumberInput from '../../components/atoms/NumberInput';
 import ConfirmationModal from '../../components/organisms/ConfirmationModal';
+import FileInput from '../../components/atoms/FileInput';
 
 interface MerchandiseData {
   merchandise_id: number,
-  image: string,
+  image: File | undefined,
   name: string,
   price: number,
   desc: string
@@ -52,7 +52,7 @@ const Create = () => {
   // Input values ==========================
   const [merchandiseData, setMerchandiseData] = useState<MerchandiseData>({
     merchandise_id: 0,
-    image: 'merchandise.jpg',
+    image: undefined,
     name: '',
     price: 10,
     desc: ''
@@ -65,17 +65,23 @@ const Create = () => {
     merchandiseData.image &&
     merchandiseData.name &&
     merchandiseData.price > 0 &&
-    merchandiseData.desc ? (
+    merchandiseData.desc? (
       setIsDataValid(true)
     ) : (
       setIsDataValid(false)
     )
-  }, [merchandiseData])
+  }, [merchandiseData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     
     setMerchandiseData({ ...merchandiseData, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.files) {
+      setMerchandiseData({ ...merchandiseData, image: e.target.files[0]})
+    };;
   };
   // =======================================
   
@@ -93,31 +99,52 @@ const Create = () => {
   // Submit ================================
   // Handle release
   const handleConfirmRelease = async () => {
-    if (!isDataValid) {
-      showToast('Field cannot be empty!', 'error');
-      return;
-    }
+    const postMerchandiseData = async () => {
+      // const formData = new FormData();
+      // if (merchandiseData.image) {
+      //   formData.append('image', merchandiseData.image);
+      // }
 
-    try {
-      const merchResponse = await axios.post('http://localhost:5000/merch/create', {
-        name: merchandiseData.name,
-        desc: merchandiseData.desc,
-        price: Number(merchandiseData.price),
-        image: merchandiseData.image,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (merchResponse.status === 200) {
-        showToast('Release successful!', 'success');
-        navigate('/merchandise');
+      if (!isDataValid) {
+        showToast('Field cannot be empty!', 'error');
+        return;
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
+      // try {
+      //   const response = await axios.post('http://localhost:5000/image/upload', formData, {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //       'Authorization': `Bearer ${token}`,
+      //     }
+      //   });
+        
+      // } catch (error) {
+      //   console.log(error);
+      //   return;
+      // }
+
+      try {
+        await axios.post('http://localhost:5000/merch/create', {
+          name: merchandiseData.name,
+          desc: merchandiseData.desc,
+          price: Number(merchandiseData.price),
+          image: merchandiseData.image,
+        }, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+  
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      navigate("/merchandise");
+    };
+
+    postMerchandiseData();
+  };
   // =======================================
 
   return (
@@ -150,8 +177,9 @@ const Create = () => {
 
           {/* Exercise Form */}
           <div className="flex flex-col gap-4 w-full max-w-[920px] mb-10">
-            {/* Meta */}
-            {/* Image di sini */}
+            <FileInput
+              onChange={handleFileChange} 
+            />
             <TextInput
               name='name'
               value={merchandiseData.name}

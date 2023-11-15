@@ -10,8 +10,6 @@ const RequireAuth = ( props: requireAuthProps ) => {
     const { allowedRole } = props;
     const { auth } = useAuth();
 
-    console.log(auth);
-
     return(
       auth?.role === allowedRole ? (
         <Outlet />
