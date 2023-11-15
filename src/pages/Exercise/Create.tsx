@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -64,7 +66,7 @@ const Create = () => {
   const [exerciseData, setExerciseData] = useState<ExerciseData>({
     exe_name: '',
     category: '',
-    difficulty: '',
+    difficulty: 'Beginner',
     language_id: 1,
     questions: [
       {
@@ -95,6 +97,47 @@ const Create = () => {
       }
     ]
   });
+
+  // Validation
+  const [isDataValid, setIsDataValid] = useState<boolean>(true);
+
+  const isQuestionsValid = () => {
+    let result = true;
+    exerciseData.questions.forEach((question) => {
+        question.question &&
+        question.options &&
+        (
+          question.options[0].option &&
+          question.options[1].option &&
+          question.options[2].option &&
+          question.options[3].option
+        ) ? (
+          result = true  
+        ) : (
+          result = false
+        )
+    })
+    return result;
+  }
+
+  useEffect(() => {
+    console.log(exerciseData.exe_name &&
+      exerciseData.category &&
+      exerciseData.difficulty &&
+      exerciseData.language_id &&
+      exerciseData.questions &&
+      isQuestionsValid());
+    exerciseData.exe_name &&
+    exerciseData.category &&
+    exerciseData.difficulty &&
+    exerciseData.language_id &&
+    exerciseData.questions &&
+    isQuestionsValid() ? (
+      setIsDataValid(true)
+    ) : (
+      setIsDataValid(false)
+    )
+  }, [exerciseData]);
   
   // Exercise input type text handler
   const handleExerciseInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -108,6 +151,7 @@ const Create = () => {
     const { name, value } = e.target;
     
     setExerciseData({ ...exerciseData, [name]: value });
+    // console.log(name + ' : ' + value);
   };
 
   // Question text area handler
@@ -181,39 +225,54 @@ const Create = () => {
   // =======================================
 
   // Filter options ========================
-    const difficultyOption = [
-      {
-        option: 'Beginner',
-        value: 'Beginner'
-      },
-      {
-        option: 'Intermediate',
-        value: 'Intermediate'
-      },
-      {
-        option: 'Advanced',
-        value: 'Advanced'
-      },
-    ];
-  
-    const languageOption = [
-      {
-        option: 'English',
-        value: 1
-      },
-      {
-        option: 'Indonesian',
-        value: 2
-      },
-      {
-        option: 'Francais',
-        value: 3
-      },
-      {
-        option: 'Deutsch',
-        value: 4
-      },
-    ];
+  const difficultyOption = [
+    {
+      option: 'Beginner',
+      value: 'Beginner'
+    },
+    {
+      option: 'Intermediate',
+      value: 'Intermediate'
+    },
+    {
+      option: 'Advanced',
+      value: 'Advanced'
+    },
+  ];
+
+  // Harus connect ke PHP
+  // Language Options
+  // const [languageOption, setLanguageOption] = useState([]);
+  // useEffect(() => {
+  //   const fetchLanguages = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:8008/api/endpoint/language.php');
+  //       // nnti lanjut
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+
+  //   }
+  // }, [])
+
+  const languageOption = [
+    {
+      option: 'English',
+      value: 1
+    },
+    {
+      option: 'Indonesian',
+      value: 2
+    },
+    {
+      option: 'Francais',
+      value: 3
+    },
+    {
+      option: 'Deutsch',
+      value: 4
+    },
+  ];
   // =======================================
   
   // Add question ==========================
@@ -313,10 +372,24 @@ const Create = () => {
 
   // Handle release
   const handleConfirmRelease = async () => {
+    if (!isDataValid) {
+      toast.error('Field cannot be empty!' , {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
     try {
       const exerciseResponse = await axios.post('http://localhost:5000/exercise/create', {
         exe_name: exerciseData.exe_name,
-        language_id: exerciseData.language_id, // Ini belum dinamis <------------
+        language_id: exerciseData.language_id,
         category: exerciseData.category,
         difficulty: exerciseData.difficulty,
         questions: exerciseData.questions
@@ -328,7 +401,7 @@ const Create = () => {
       });
       
       if (exerciseResponse.status === 200) {
-        navigate('/exercise')
+        navigate('/exercise');
       }
     } catch (error) {
     }
@@ -342,6 +415,8 @@ const Create = () => {
 
   return (
     <>
+      <ToastContainer />
+
       {
         isDeleteModalOpen && (
           <ConfirmationModal
@@ -421,7 +496,7 @@ const Create = () => {
               onChange={handleExerciseSelectChange}/>
             <Select
               label='Language'
-              name='language'
+              name='language_id'
               value={exerciseData.language_id}
               options={languageOption}
               onChange={handleExerciseSelectChange}/>
@@ -453,13 +528,20 @@ const Create = () => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-4 w-full">
+          <div className="flex flex-col sm:flex-row-reverse justify-center gap-4 w-full">
             <button
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
               onClick={handleReleaseExercise}
             >
               Release Exercise
             </button>
+            <Link to='/exercise'>
+              <button
+                className='w-full Poppins400 bg-white border-2 border-[--red] text-[--red] px-12 py-3 rounded-md'
+              >
+                Back
+              </button>
+            </Link>
           </div>
         </div>
       </div>

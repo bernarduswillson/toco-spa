@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import useToken from '../../hooks/useToken';
 
 import NavItem from '../atoms/NavItem';
 import ConfirmationModal from './ConfirmationModal';
@@ -12,6 +12,7 @@ interface SidebarProps {
 const Sidebar = (props: SidebarProps) => {
   const { active } = props;
   const navigate = useNavigate();
+  const { removeToken } = useToken();
 
   // Nav items data
   const navChildData = [
@@ -49,7 +50,7 @@ const Sidebar = (props: SidebarProps) => {
   }
   
   const handleConfirm = () => {
-    Cookies.remove('token');
+    removeToken();
     navigate('/login');
     setIsModalOpen(false);
   }

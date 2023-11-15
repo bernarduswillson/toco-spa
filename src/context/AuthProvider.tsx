@@ -1,4 +1,5 @@
 import { createContext, useState, ReactNode } from 'react';
+import useToken from '../hooks/useToken';
 
 interface AuthData {
   user: string | null;
@@ -21,17 +22,15 @@ export const AuthContext = createContext<AuthContextProps>({
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [auth, setAuth] = useState<AuthData>({
-    user: null,
-    role: 1573,
-    token: null,
-  });
+  const { decryptToken } = useToken();
+
+  const [auth, setAuth] = useState<AuthData>(decryptToken);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 };
 
 export {};
