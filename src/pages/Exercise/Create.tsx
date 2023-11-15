@@ -55,7 +55,7 @@ const Create = () => {
     {
       id: 2,
       name: "New",
-      url: "/exercise/new",
+      url: "/exercise/create",
       active: true
     },
   ];
@@ -121,12 +121,6 @@ const Create = () => {
   }
 
   useEffect(() => {
-    console.log(exerciseData.exe_name &&
-      exerciseData.category &&
-      exerciseData.difficulty &&
-      exerciseData.language_id &&
-      exerciseData.questions &&
-      isQuestionsValid());
     exerciseData.exe_name &&
     exerciseData.category &&
     exerciseData.difficulty &&
@@ -404,6 +398,7 @@ const Create = () => {
         navigate('/exercise');
       }
     } catch (error) {
+      console.log(error);
     }
   }
 
@@ -533,7 +528,7 @@ const Create = () => {
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
               onClick={handleReleaseExercise}
             >
-              Release Exercise
+              Release exercise
             </button>
             <Link to='/exercise'>
               <button
