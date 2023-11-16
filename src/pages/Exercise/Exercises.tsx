@@ -1,5 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
+import useAuth from '../../hooks/useAuth';
+import useToken from '../../hooks/useToken';
+import { useNavigate } from 'react-router';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -24,6 +27,10 @@ interface ExerciseData {
 };
 
 const Exercises = () => {
+  const { auth } = useAuth();
+  const token = auth.token;
+  const { removeToken } = useToken();
+  const navigate = useNavigate();
 
   // URL Path ==============================
   const urlPath = [
@@ -102,10 +109,17 @@ const Exercises = () => {
   useEffect(() => {
     const fetchAllExercise = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/exercise/');
+        const response = await axios.get('http://localhost:5000/exercise/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setExerciseData(response.data.result);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     }
 

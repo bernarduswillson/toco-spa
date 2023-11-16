@@ -39,7 +39,6 @@ const useToken = () => {
   // Remove auth from cookie
   const removeToken = () => {
     Cookies.remove('userdata');
-    // window.location.reload();
     setAuth({
       user: null,
       token: null,

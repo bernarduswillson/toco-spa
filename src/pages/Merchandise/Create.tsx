@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
+import useToken from '../../hooks/useToken';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -25,6 +26,7 @@ const Create = () => {
   const { auth } = useAuth();
   const { showToast } = useToast();
   const token = auth.token;
+  const { removeToken } = useToken();
 
   // URL Path ==============================
   const urlPath = [
@@ -119,8 +121,11 @@ const Create = () => {
           },
         });
   
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
         return;
       }
       navigate("/merchandise");

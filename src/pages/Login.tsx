@@ -25,6 +25,7 @@ const Login: React.FC = () => {
     name: '',
     password: ''
   });
+  const [errMsg, setErrMsg] = useState('');
   
   // Input validation
   const [canLogin, setCanLogin] = useState(false);
@@ -73,6 +74,7 @@ const Login: React.FC = () => {
         setLoading(false);
       } catch (error) {
         console.log(error);
+        setErrMsg('Incorrect email or password');
         setLoading(false);
       }
     };
@@ -117,20 +119,33 @@ const Login: React.FC = () => {
               value={formData.password}
               onChange={handleInputChange}
             />
-            <div className='flex justify-center mt-[80px] mb-[30px]'>
-              {loading || !canLogin
-                ? (
-                  <div className='Poppins300 text-[20px] custom-button w-[250px] text-center opacity-60'>
-                    Login
-                  </div>
+            <div className='flex flex-col justify-center items-center mt-[80px] mb-[30px]'>
+              {
+                errMsg ? (
+                  <span className='Poppins400 text-xs text-[--red] mb-2'>{errMsg}</span>
+                ) : (
+                  null
                 )
-                : (
-                  <button
-                    onClick={handleLogin}
-                    className='Poppins300 text-[20px] custom-button text-center transition-all duration-300 ease-in-out hover:translate-y-[-3px] hover:opacity-60 active:translate-y-[3px]'>
-                    Login
-                  </button>
-                )}
+              }
+              {
+                !loading && canLogin ? (
+                <button
+                  onClick={handleLogin}
+                  className='Poppins300 text-[20px] custom-button text-center cursor-pointer transition-all duration-300 ease-in-out hover:translate-y-[-3px] hover:opacity-60 active:translate-y-[3px]'
+                >
+                  Login
+                </button>
+                ) : (
+                <button
+                  onClick={handleLogin}
+                  className='Poppins300 text-[20px] opacity-50 cursor-not-allowed custom-button text-center'
+                  disabled
+                >
+                  Login
+                </button>
+                )
+              }
+              
             </div>
           </div>
         </div>

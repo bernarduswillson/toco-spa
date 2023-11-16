@@ -4,6 +4,7 @@ import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import useToken from '../../hooks/useToken';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -37,6 +38,7 @@ const Edit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { auth } = useAuth();
+  const { removeToken } = useToken();
   const { showToast } = useToast();
   const token = auth.token;
 
@@ -146,13 +148,21 @@ const Edit = () => {
   useEffect(() => {
     const validateExerciseId = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/exercise/validate/${id}`);
+        const response = await axios.get(`http://localhost:5000/exercise/validate/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         if (!response.data.result) {
           navigate('/404');
           return;
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
@@ -165,13 +175,16 @@ const Edit = () => {
         });
 
         setExerciseData(response.data.result);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     }
 
     validateExerciseId().then(fetchExerciseData);
-  }, [id, token]);
+  }, [id, token, navigate]);
   
   // Exercise input type text handler
   const handleExerciseInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -426,8 +439,11 @@ const Edit = () => {
       });
 
       showToast('Successfully saved!', 'success');
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        removeToken();
+        navigate('/login');
+      }
     }
   }
 
@@ -455,8 +471,11 @@ const Edit = () => {
       });
       showToast('Delete successful!', 'success');
       navigate('/exercise')
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        removeToken();
+        navigate('/login');
+      }
     }
   };
 

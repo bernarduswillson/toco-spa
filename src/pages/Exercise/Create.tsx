@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
+import useToken from '../../hooks/useToken';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -37,6 +38,7 @@ const Create = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
   const { showToast } = useToast();
+  const { removeToken } = useToken();
   const token = auth.token;
 
   // URL Path ==============================
@@ -390,8 +392,11 @@ const Create = () => {
         showToast('Release successful!', 'success');
         navigate('/exercise');
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        removeToken();
+        navigate('/login');
+      }
     }
   }
 

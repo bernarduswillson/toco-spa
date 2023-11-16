@@ -1,5 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
+import useToken from '../../hooks/useToken';
+import useAuth from '../../hooks/useAuth';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -23,6 +26,10 @@ interface MerchandiseData {
 };
 
 const Merchandises = () => {
+  const navigate = useNavigate();
+  const { removeToken } = useToken();
+  const { auth } = useAuth();
+  const token = auth.token;
 
   // URL Path ==============================
   const urlPath = [
@@ -65,10 +72,17 @@ const Merchandises = () => {
   useEffect(() => {
     const fetchAllMerchandise = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/merch/');
+        const response = await axios.get('http://localhost:5000/merch/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        });
         setMerchandiseData(response.data.result);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 

@@ -1,6 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router';
+import useToken from '../../hooks/useToken';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -22,6 +24,8 @@ interface AdminData {
 const Admins = () => {
   const { auth } = useAuth();
   const token = auth.token;
+  const navigate = useNavigate();
+  const { removeToken } = useToken();
 
   // URL Path ==============================
   const urlPath = [
@@ -68,13 +72,16 @@ const Admins = () => {
             },
         });
         setAdminData(response.data.result);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
     fetchAllAdmin();
-  }, [])
+  }, [removeToken, navigate])
   // =======================================
   
   return (

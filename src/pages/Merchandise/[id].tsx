@@ -3,6 +3,7 @@ import { useNavigate, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
+import useToken from '../../hooks/useToken';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
@@ -26,6 +27,7 @@ const Create = () => {
   const { auth } = useAuth();
   const { showToast } = useToast();
   const token = auth.token;
+  const { removeToken } = useToken();
 
   // URL Path ==============================
   const urlPath = [
@@ -63,23 +65,37 @@ const Create = () => {
   useEffect(() => {
     const validateMerchandiseId = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/merch/validate/${id}`);
+        const response = await axios.get(`http://localhost:5000/merch/validate/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         if (!response.data.result) {
           navigate('/404');
           return;
         }
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
     const fetchMerchandiseData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/merch/${id}`);
+        const response = await axios.get(`http://localhost:5000/merch/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         
         setMerchandiseData(response.data.result);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
@@ -147,8 +163,11 @@ const Create = () => {
 
       showToast('Update successful', 'success');
 
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        removeToken();
+        navigate('/login');
+      }
     }
   }
 
@@ -163,8 +182,11 @@ const Create = () => {
 
       showToast('Delete successful', 'success');
       navigate('/merchandise');
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        removeToken();
+        navigate('/login');
+      }
     }
   }
   // =======================================

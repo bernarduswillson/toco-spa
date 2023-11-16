@@ -3,6 +3,7 @@ import { useNavigate, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
+import useToken from '../../hooks/useToken';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -23,6 +24,7 @@ const Create = () => {
   const { auth } = useAuth();
   const { showToast } = useToast();
   const token = auth.token;
+  const { removeToken } = useToken();
 
   // URL Path ==============================
   const urlPath = [
@@ -65,13 +67,16 @@ const Create = () => {
         });
 
         setAdminData({ ...response.data.result, password: ''});
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
     fetchAdmin();
-  }, [id, token]);
+  }, [id, token, navigate, removeToken]);
   
   // Validation
   const [isDataValid, setIsDataValid] = useState<boolean>(true);
@@ -134,9 +139,11 @@ const Create = () => {
 
         showToast('Edit admin successful', 'success');
   
-      } catch (error) {
-        console.log(error);
-        return;
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
@@ -157,9 +164,11 @@ const Create = () => {
         showToast('Delete admin successful', 'success');
         navigate('/admin');
 
-      } catch (error) {
-        console.log(error);
-        return;
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
     };
 
