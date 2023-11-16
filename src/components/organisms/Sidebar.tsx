@@ -6,7 +6,7 @@ import NavItem from '../atoms/NavItem';
 import ConfirmationModal from './ConfirmationModal';
 
 interface SidebarProps {
-  active: "Home" | "Exercises" | "Merchandise"
+  active: "Home" | "Exercises" | "Merchandise" | "Admin" | "Voucher"
 }
 
 const Sidebar = (props: SidebarProps) => {
@@ -38,6 +38,12 @@ const Sidebar = (props: SidebarProps) => {
       id: 3,
       label: "Admin",
       destination: "/admin",
+      icon: "/icons/nav-merch.svg"
+    },
+    {
+      id: 4,
+      label: "Voucher",
+      destination: "/voucher",
       icon: "/icons/nav-merch.svg"
     },
   ]

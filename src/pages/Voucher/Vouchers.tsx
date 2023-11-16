@@ -9,19 +9,19 @@ import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import Searchbar from '../../components/atoms/Searchbar';
-import AdminCard from '../../components/molecules/AdminCard';
+import VoucherCard from '../../components/molecules/VoucherCard';
 
 interface SearchData {
   search: string;
 }
 
-interface AdminData {
-  admin_id: number;
-  email: string;
-  username: string;
+interface VoucherData {
+  id: number;
+  code: string;
+  amount: number;
 };
 
-const Admins = () => {
+const Vouchers = () => {
   const { auth } = useAuth();
   const token = auth.token;
   const navigate = useNavigate();
@@ -37,8 +37,8 @@ const Admins = () => {
     },
     {
       id: 1,
-      name: "Admins",
-      url: "/admins",
+      name: "Vouchers",
+      url: "/voucher",
       active: true
     },
   ];
@@ -52,7 +52,6 @@ const Admins = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSearchData({ ...searchData, [name]: value });
-    console.log(searchData.search);
   };
 
   const handleSubmitSearch = (e: React.FormEvent) => {
@@ -62,16 +61,16 @@ const Admins = () => {
   // =======================================
   
   // Admin data ============================
-  const [adminData, setAdminData] = useState<AdminData[]>([]);
+  const [voucherData, setVoucherData] = useState<VoucherData[]>([]);
   useEffect(() => {
-    const fetchAllAdmin = async () => {
+    const fetchAllVouchers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/admin/', {
+        const response = await axios.get('http://localhost:5000/voucher/', {
             headers: {
               'Authorization': `Bearer ${token}`,
             },
         });
-        setAdminData(response.data.result);
+        setVoucherData(response.data.result);
       } catch (error: any) {
         if (error.response.status === 401) {
           removeToken();
@@ -80,14 +79,14 @@ const Admins = () => {
       }
     };
 
-    fetchAllAdmin();
+    fetchAllVouchers();
   }, [])
   // =======================================
   
   return (
     <div className='flex'>
       {/* Sidebar */}
-      <Sidebar active='Admin'/>
+      <Sidebar active='Voucher'/>
 
       {/* Main content */}
       <div className='min-h-screen w-full py-5 lg:py-20 xl:py-28 pr-5 pl-28 flex flex-col gap-9 items-center'>
@@ -95,7 +94,7 @@ const Admins = () => {
         {/* Header */}
         <div className="flex flex-col w-full max-w-[920px]">
           <Breadcrumbs urlPath={urlPath} />
-          <PageTitle text='Admins' create createUrl='/admin/create'/>
+          <PageTitle text='Vouchers' create createUrl='/voucher/create'/>
         </div>
 
         {/* Search and Filter */}
@@ -120,19 +119,19 @@ const Admins = () => {
             <tbody>
               <tr className=''>
                 <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>No</th>
-                <th className='lg:hidden bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Admin</th>
-                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Username</th>
-                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Email</th>
+                <th className='lg:hidden bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Voucher</th>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Code</th>
+                <th className='hidden lg:table-cell bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Reward</th>
                 <th className='bg-[--orange] text-center text-white text-xs Poppins600 py-2'>Actions</th>
               </tr>
               {
-                adminData && adminData.map((admin, number) => 
-                  <AdminCard
+                voucherData && voucherData.map((voucher, number) => 
+                  <VoucherCard
                     key={number}
-                    id={admin.admin_id}
                     number={number + 1}
-                    username={admin.username}
-                    email={admin.email}
+                    id={voucher.id}
+                    code={voucher.code}
+                    amount={voucher.amount}
                   />
                 )
               }
@@ -145,4 +144,4 @@ const Admins = () => {
   );
 };
 
-export default Admins;
+export default Vouchers;

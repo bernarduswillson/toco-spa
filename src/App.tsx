@@ -15,6 +15,7 @@ import MerchEdit from './pages/Merchandise/[id]';
 import Admins from './pages/Admin/Admins';
 import AdminCreate from './pages/Admin/Create';
 import AdminEdit from './pages/Admin/[id]';
+import Vouchers from './pages/Voucher/Vouchers';
 
 const ROLES = {
   guest: 1573,
@@ -46,6 +47,8 @@ const App = () => {
           <Route path="admin" element={<Admins />} />
           <Route path="admin/create" element={<AdminCreate />} />
           <Route path="admin/:id" element={<AdminEdit />} />
+
+          <Route path="voucher" element={<Vouchers />} />
         </Route>
 
         <Route path='/*' element={<NotFound />} />
