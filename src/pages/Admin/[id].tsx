@@ -3,21 +3,18 @@ import { useNavigate, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
-import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
 import PageTitle from '../../components/atoms/PageTitle';
 import TextInput from '../../components/atoms/TextInput';
-import NumberInput from '../../components/atoms/NumberInput';
 import ConfirmationModal from '../../components/organisms/ConfirmationModal';
 
-interface MerchandiseData {
-  merchandise_id: number,
-  image: string,
-  name: string,
-  price: number,
-  desc: string
+interface AdminData {
+  admin_id: number;
+  email: string;
+  username: string;
+  password: string;
 };
 
 const Create = () => {
@@ -37,162 +34,163 @@ const Create = () => {
     },
     {
       id: 1,
-      name: "Merchandises",
-      url: "/merchandise",
+      name: "Admins",
+      url: "/admin",
       active: false
     },
     {
       id: 2,
-      name: "New",
-      url: "/merchandise/create",
+      name: "Edit",
+      url: "/admin/edit",
       active: true
     },
   ];
   // =======================================
   
   // Input values ==========================
-  const [merchandiseData, setMerchandiseData] = useState<MerchandiseData>({
-    merchandise_id: 0,
-    image: 'merchandise.jpg',
-    name: '',
-    price: 10,
-    desc: ''
+  const [adminData, setAdminData] = useState<AdminData>({
+    admin_id: 0,
+    username: '',
+    email: '',
+    password: '',
   });
 
-  // Fetch data
   useEffect(() => {
-    const validateMerchandiseId = async () => {
+    const fetchAdmin = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/merch/validate/${id}`);
-        if (!response.data.result) {
-          navigate('/404');
-          return;
-        }
+        const response = await axios.get(`http://localhost:5000/admin/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        setAdminData({ ...response.data.result, password: ''});
       } catch (error) {
         console.log(error);
       }
     };
 
-    const fetchMerchandiseData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/merch/${id}`);
-        
-        setMerchandiseData(response.data.result);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    validateMerchandiseId().then(fetchMerchandiseData);
-  }, [id])
+    fetchAdmin();
+  }, [id, token]);
   
-   // Validation
+  // Validation
   const [isDataValid, setIsDataValid] = useState<boolean>(true);
 
   useEffect(() => {
-    merchandiseData.image &&
-    merchandiseData.name &&
-    merchandiseData.price > 0 &&
-    merchandiseData.desc ? (
+    adminData.username &&
+    adminData.email &&
+    adminData.password ? (
       setIsDataValid(true)
     ) : (
       setIsDataValid(false)
     )
-  }, [merchandiseData])
+  }, [adminData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     
-    setMerchandiseData({ ...merchandiseData, [name]: value });
+    setAdminData({ ...adminData, [name]: value });
   };
   // =======================================
   
   // Modal =================================
-  const [isReleaseModalOpen, setIsReleaseModalOpen] = useState<boolean>(false);
-  const handleRelease = () => {
-    setIsReleaseModalOpen(true);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const handleCreate = () => {
+    setIsCreateModalOpen(true);
   };
-  const handleCancelRelease = () => {
-    setIsReleaseModalOpen(false);
+  const handleCancelCreate = () => {
+    setIsCreateModalOpen(false);
   };
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const handleDelete = () => {
     setIsDeleteModalOpen(true);
-  }
+  };
   const handleCancelDelete = () => {
     setIsDeleteModalOpen(false);
-  }
+  };
   // =======================================
   
   // Submit ================================
-  // Handle release
-  const handleConfirmRelease = async () => {
-    if (!isDataValid) {
-      showToast('Field cannot be empty!', 'error');
-      return;
-    }
+  // Handle edit
+  const handleConfirmEdit = () => {
+    const updateAdminData = async () => {
 
-    try {
-      await axios.put(`http://localhost:5000/merch/edit/${id}`, {
-        name: merchandiseData.name,
-        desc: merchandiseData.desc,
-        price: Number(merchandiseData.price),
-        image: merchandiseData.image,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      if (!isDataValid) {
+        showToast('Field cannot be empty!', 'error');
+        return;
+      }
 
-      showToast('Update successful', 'success');
+      try {
+        await axios.put(`http://localhost:5000/admin/edit/${id}`, {
+          username: adminData.username,
+          email: adminData.email,
+          password: adminData.password,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
 
-    } catch (error) {
-      console.log(error);
-    }
-  }
+        showToast('Edit admin successful', 'success');
+  
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    };
+
+    updateAdminData();
+  };
 
   // Handle delete
-  const handleConfirmDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/merch/delete/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+  const handleConfirmDelete = () => {
+    const deleteAdminData = async () => {
+      try {
+        await axios.delete(`http://localhost:5000/admin/delete/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        console.log()
+        showToast('Delete admin successful', 'success');
+        navigate('/admin');
 
-      showToast('Delete successful', 'success');
-      navigate('/merchandise');
-    } catch (error) {
-      console.log(error);
-    }
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    };
+
+    deleteAdminData();
   }
   // =======================================
 
   return (
     <>
       {
-        isReleaseModalOpen && (
+        isCreateModalOpen && (
           <ConfirmationModal
-            title='Release exercise?'
-            message='Are you sure you want to release this exercise?'
-            ok='Release'
+            title='Edit admin?'
+            message='Are you sure you want to save changes to this admin?'
+            ok='Save'
             cancel='Cancel'
-            onCancel={handleCancelRelease}
-            onConfirm={handleConfirmRelease}
+            onCancel={handleCancelCreate}
+            onConfirm={handleConfirmEdit}
           />
         )
       }
+
       {
         isDeleteModalOpen && (
           <ConfirmationModal
-            title='Delete merchandise?'
-            message='Are you sure you want to delete this exercise? This action cannot be undone'
+            title='Delete admin?'
+            message='Are you sure you want to delete this admin? This action cannot be undone'
             ok='Delete'
             cancel='Cancel'
             onCancel={handleCancelDelete}
             onConfirm={handleConfirmDelete}
-            warning
           />
         )
       }
@@ -207,32 +205,30 @@ const Create = () => {
           {/* Header */}
           <div className="flex flex-col w-full max-w-[920px]">
             <Breadcrumbs urlPath={urlPath} />
-            <PageTitle text='New Merchandise'/>
+            <PageTitle text='New Admin'/>
           </div>
 
           {/* Exercise Form */}
           <div className="flex flex-col gap-4 w-full max-w-[920px] mb-10">
-            {/* Meta */}
-            {/* Image di sini */}
             <TextInput
-              name='name'
-              value={merchandiseData.name}
-              placeholder='Merchandise name'
-              label='Merchandise name'
+              name='username'
+              value={adminData.username}
+              placeholder='Username'
+              label='Username'
               onChange={handleInputChange}
             />
             <TextInput
-              name='desc'
-              value={merchandiseData.desc}
-              placeholder='Description'
-              label='Description'
+              name='email'
+              value={adminData.email}
+              placeholder='Email'
+              label='Email'
               onChange={handleInputChange}
             />
-            <NumberInput
-              name='price'
-              value={merchandiseData.price}
-              placeholder='Price'
-              label='Price'
+            <TextInput
+              name='password'
+              value={adminData.password}
+              placeholder='Password'
+              label='Password'
               onChange={handleInputChange}
             />
           </div>
@@ -240,9 +236,9 @@ const Create = () => {
           <div className="flex flex-col sm:flex-row-reverse justify-center gap-4 w-full">
             <button
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
-              onClick={handleRelease}
+              onClick={handleCreate}
             >
-              Save changes
+              Edit admin
             </button>
             <button
               className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
@@ -250,7 +246,7 @@ const Create = () => {
             >
               Delete
             </button>
-            <Link to='/merchandise'>
+            <Link to='/admin'>
               <button
                 className='w-full Poppins400 bg-white border-2 border-[--red] text-[--red] px-12 py-3 rounded-md'
               >

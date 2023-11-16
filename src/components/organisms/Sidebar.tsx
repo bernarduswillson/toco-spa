@@ -34,6 +34,12 @@ const Sidebar = (props: SidebarProps) => {
       destination: "/merchandise",
       icon: "/icons/nav-merch.svg"
     },
+    {
+      id: 3,
+      label: "Admin",
+      destination: "/admin",
+      icon: "/icons/nav-merch.svg"
+    },
   ]
 
   // Toggle sidebar
