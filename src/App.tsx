@@ -13,6 +13,7 @@ import Merchandises from './pages/Merchandise/Merchandises';
 import MerchCreate from './pages/Merchandise/Create';
 import MerchEdit from './pages/Merchandise/[id]';
 import Admins from './pages/Admin/Admins';
+import AdminCreate from './pages/Admin/Create';
 
 const ROLES = {
   guest: 1573,
@@ -42,6 +43,7 @@ const App = () => {
           <Route path="merchandise/:id" element={<MerchEdit />} />
 
           <Route path="admin" element={<Admins />} />
+          <Route path="admin/create" element={<AdminCreate />} />
         </Route>
 
         <Route path='/*' element={<NotFound />} />

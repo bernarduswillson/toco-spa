@@ -10,7 +10,7 @@ interface AdminCardProps {
 
 function AdminCard(props: AdminCardProps) {
   const { id, number, username, email } = props;
-  const route = `/merchandise/${id}`;
+  const route = `/admin/${id}`;
 
   return (
     <tr>
