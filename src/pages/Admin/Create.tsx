@@ -112,7 +112,7 @@ const Create = () => {
         console.log(error);
         return;
       }
-      showToast('Admin created successful', 'success');
+      showToast('Create admin successful', 'success');
       navigate("/admin");
     };
 
