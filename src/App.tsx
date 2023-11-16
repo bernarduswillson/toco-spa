@@ -12,6 +12,7 @@ import ExerciseEdit from './pages/Exercise/[id]';
 import Merchandises from './pages/Merchandise/Merchandises';
 import MerchCreate from './pages/Merchandise/Create';
 import MerchEdit from './pages/Merchandise/[id]';
+import Admins from './pages/Admin/Admins';
 
 const ROLES = {
   guest: 1573,
@@ -39,6 +40,8 @@ const App = () => {
           <Route path="merchandise" element={<Merchandises />} />
           <Route path="merchandise/create" element={<MerchCreate />} />
           <Route path="merchandise/:id" element={<MerchEdit />} />
+
+          <Route path="admin" element={<Admins />} />
         </Route>
 
         <Route path='/*' element={<NotFound />} />

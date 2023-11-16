@@ -110,19 +110,6 @@ const Create = () => {
         return;
       }
 
-      // try {
-      //   const response = await axios.post('http://localhost:5000/image/upload', formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //       'Authorization': `Bearer ${token}`,
-      //     }
-      //   });
-        
-      // } catch (error) {
-      //   console.log(error);
-      //   return;
-      // }
-
       try {
         await axios.post('http://localhost:5000/merch/create', {
           name: merchandiseData.name,
