@@ -43,7 +43,7 @@ const Create = () => {
     {
       id: 2,
       name: "Edit",
-      url: "/admin/edit",
+      url: `/admin/${id}`,
       active: true
     },
   ];
@@ -58,6 +58,22 @@ const Create = () => {
   });
 
   useEffect(() => {
+    const validateAdmin = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/admin/validate/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
+        navigate('/404')
+      }
+    }
+
     const fetchAdmin = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/admin/${id}`, {
@@ -76,7 +92,7 @@ const Create = () => {
     };
 
     fetchAdmin();
-  }, [id, token, navigate, removeToken]);
+  }, [id, token]);
   
   // Validation
   const [isDataValid, setIsDataValid] = useState<boolean>(true);
@@ -206,7 +222,7 @@ const Create = () => {
     
       <div className='flex'>
         {/* Sidebar */}
-        <Sidebar active='Merchandise'/>
+        <Sidebar active='Admin'/>
 
         {/* Main content */}
         <div className='min-h-screen w-full py-5 lg:py-20 xl:py-28 pr-5 pl-28 flex flex-col gap-9 items-center'>
@@ -214,7 +230,7 @@ const Create = () => {
           {/* Header */}
           <div className="flex flex-col w-full max-w-[920px]">
             <Breadcrumbs urlPath={urlPath} />
-            <PageTitle text='New Admin'/>
+            <PageTitle text='Edit Admin'/>
           </div>
 
           {/* Exercise Form */}

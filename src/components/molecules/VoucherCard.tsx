@@ -10,7 +10,7 @@ interface VoucherCardProps {
 
 function AdminCard(props: VoucherCardProps) {
   const { id, number, code, amount } = props;
-  const route = `/admin/${id}`;
+  const route = `/voucher/${id}`;
 
   return (
     <tr>

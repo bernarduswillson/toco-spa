@@ -16,7 +16,7 @@ interface SearchData {
 }
 
 interface VoucherData {
-  id: number;
+  voucher_id: number;
   code: string;
   amount: number;
 };
@@ -129,7 +129,7 @@ const Vouchers = () => {
                   <VoucherCard
                     key={number}
                     number={number + 1}
-                    id={voucher.id}
+                    id={voucher.voucher_id}
                     code={voucher.code}
                     amount={voucher.amount}
                   />

@@ -4,7 +4,6 @@ import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import useToast from '../../hooks/useToast';
 import useToken from '../../hooks/useToken';
-import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/organisms/Sidebar';
 import Breadcrumbs from '../../components/organisms/Breadcrumbs';
@@ -13,15 +12,13 @@ import TextInput from '../../components/atoms/TextInput';
 import NumberInput from '../../components/atoms/NumberInput';
 import ConfirmationModal from '../../components/organisms/ConfirmationModal';
 
-interface MerchandiseData {
-  merchandise_id: number,
-  image: string,
-  name: string,
-  price: number,
-  desc: string
+interface VoucherData {
+  voucher_id: number;
+  code: string;
+  amount: number;
 };
 
-const Create = () => {
+const Edit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -39,59 +36,52 @@ const Create = () => {
     },
     {
       id: 1,
-      name: "Merchandises",
-      url: "/merchandise",
+      name: "Vouchers",
+      url: "/voucher",
       active: false
     },
     {
       id: 2,
       name: "Edit",
-      url: `/merchandise/${id}`,
+      url: `/voucher/${id}`,
       active: true
     },
   ];
   // =======================================
   
   // Input values ==========================
-  const [merchandiseData, setMerchandiseData] = useState<MerchandiseData>({
-    merchandise_id: 0,
-    image: 'merchandise.jpg',
-    name: '',
-    price: 10,
-    desc: ''
+  const [voucherData, setVoucherData] = useState<VoucherData>({
+    voucher_id: 0,
+    code: '',
+    amount: 0,
   });
 
-  // Fetch data
   useEffect(() => {
-    const validateMerchandiseId = async () => {
+    const validateVoucher = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/merch/validate/${id}`, {
+        const response = await axios.get(`http://localhost:5000/voucher/validate/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
-        if (!response.data.result) {
-          navigate('/404');
-          return;
-        }
       } catch (error: any) {
         if (error.response.status === 401) {
           removeToken();
           navigate('/login');
         }
-        navigate('/404')
+        navigate('/404');
       }
     };
 
-    const fetchMerchandiseData = async () => {
+    const fetchVoucher = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/merch/${id}`, {
+        const response = await axios.get(`http://localhost:5000/voucher/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
-        
-        setMerchandiseData(response.data.result);
+
+        setVoucherData(response.data.result);
       } catch (error: any) {
         if (error.response.status === 401) {
           removeToken();
@@ -100,129 +90,137 @@ const Create = () => {
       }
     };
 
-    validateMerchandiseId().then(fetchMerchandiseData);
-  }, [id])
+    validateVoucher().then(fetchVoucher);
+  }, [id, token]);
   
-   // Validation
+  // Validation
   const [isDataValid, setIsDataValid] = useState<boolean>(true);
 
   useEffect(() => {
-    merchandiseData.image &&
-    merchandiseData.name &&
-    merchandiseData.price > 0 &&
-    merchandiseData.desc ? (
+    voucherData.code &&
+    voucherData.amount > 0 ? (
       setIsDataValid(true)
     ) : (
       setIsDataValid(false)
     )
-  }, [merchandiseData])
+  }, [voucherData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     
-    setMerchandiseData({ ...merchandiseData, [name]: value });
+    setVoucherData({ ...voucherData, [name]: value });
+    console.log(voucherData);
   };
   // =======================================
   
   // Modal =================================
-  const [isReleaseModalOpen, setIsReleaseModalOpen] = useState<boolean>(false);
-  const handleRelease = () => {
-    setIsReleaseModalOpen(true);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState<boolean>(false);
+  const handleSave = () => {
+    setIsSaveModalOpen(true);
   };
-  const handleCancelRelease = () => {
-    setIsReleaseModalOpen(false);
+  const handleCancelCreate = () => {
+    setIsSaveModalOpen(false);
   };
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const handleDelete = () => {
     setIsDeleteModalOpen(true);
-  }
+  };
   const handleCancelDelete = () => {
     setIsDeleteModalOpen(false);
-  }
+  };
   // =======================================
   
   // Submit ================================
-  // Handle release
-  const handleConfirmRelease = async () => {
-    if (!isDataValid) {
-      showToast('Field cannot be empty!', 'error');
-      return;
-    }
+  // Handle edit
+  const handleConfirmEdit = () => {
+    const updateVoucherData = async () => {
 
-    try {
-      await axios.put(`http://localhost:5000/merch/edit/${id}`, {
-        name: merchandiseData.name,
-        desc: merchandiseData.desc,
-        price: Number(merchandiseData.price),
-        image: merchandiseData.image,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      showToast('Update successful', 'success');
-
-    } catch (error: any) {
-      if (error.response.status === 401) {
-        removeToken();
-        navigate('/login');
+      if (!isDataValid) {
+        showToast('Field cannot be empty!', 'error');
+        return;
       }
-    }
-  }
+
+      try {
+        await axios.put(`http://localhost:5000/voucher/edit/${id}`, {
+          code: voucherData.code,
+          amount: voucherData.amount,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        showToast('Edit voucher successful', 'success');
+  
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
+      }
+    };
+
+    updateVoucherData();
+  };
 
   // Handle delete
-  const handleConfirmDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/merch/delete/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+  const handleConfirmDelete = () => {
+    const deleteVoucherData = async () => {
+      try {
+        await axios.delete(`http://localhost:5000/voucher/delete/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        console.log()
+        showToast('Delete voucher successful', 'success');
+        navigate('/voucher');
 
-      showToast('Delete successful', 'success');
-      navigate('/merchandise');
-    } catch (error: any) {
-      if (error.response.status === 401) {
-        removeToken();
-        navigate('/login');
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
       }
-    }
+    };
+
+    deleteVoucherData();
   }
   // =======================================
 
   return (
     <>
       {
-        isReleaseModalOpen && (
+        isSaveModalOpen && (
           <ConfirmationModal
-            title='Release exercise?'
-            message='Are you sure you want to release this exercise?'
-            ok='Release'
+            title='Edit voucher?'
+            message='Are you sure you want to save changes to this voucher?'
+            ok='Save'
             cancel='Cancel'
-            onCancel={handleCancelRelease}
-            onConfirm={handleConfirmRelease}
+            onCancel={handleCancelCreate}
+            onConfirm={handleConfirmEdit}
           />
         )
       }
+
       {
         isDeleteModalOpen && (
           <ConfirmationModal
-            title='Delete merchandise?'
-            message='Are you sure you want to delete this exercise? This action cannot be undone'
+            title='Delete voucher?'
+            message='Are you sure you want to delete this voucher? This action cannot be undone'
             ok='Delete'
             cancel='Cancel'
             onCancel={handleCancelDelete}
             onConfirm={handleConfirmDelete}
-            warning
           />
         )
       }
     
       <div className='flex'>
         {/* Sidebar */}
-        <Sidebar active='Merchandise'/>
+        <Sidebar active='Voucher'/>
 
         {/* Main content */}
         <div className='min-h-screen w-full py-5 lg:py-20 xl:py-28 pr-5 pl-28 flex flex-col gap-9 items-center'>
@@ -230,32 +228,23 @@ const Create = () => {
           {/* Header */}
           <div className="flex flex-col w-full max-w-[920px]">
             <Breadcrumbs urlPath={urlPath} />
-            <PageTitle text='New Merchandise'/>
+            <PageTitle text='Edit Voucher'/>
           </div>
 
           {/* Exercise Form */}
           <div className="flex flex-col gap-4 w-full max-w-[920px] mb-10">
-            {/* Meta */}
-            {/* Image di sini */}
-            <TextInput
-              name='name'
-              value={merchandiseData.name}
-              placeholder='Merchandise name'
-              label='Merchandise name'
-              onChange={handleInputChange}
-            />
-            <TextInput
-              name='desc'
-              value={merchandiseData.desc}
-              placeholder='Description'
-              label='Description'
+          <TextInput
+              name='code'
+              value={voucherData.code}
+              placeholder='Code'
+              label='Voucher Code'
               onChange={handleInputChange}
             />
             <NumberInput
-              name='price'
-              value={merchandiseData.price}
-              placeholder='Price'
-              label='Price'
+              name='amount'
+              value={voucherData.amount}
+              placeholder='Amount'
+              label='Reward amount'
               onChange={handleInputChange}
             />
           </div>
@@ -263,9 +252,9 @@ const Create = () => {
           <div className="flex flex-col sm:flex-row-reverse justify-center gap-4 w-full">
             <button
               className='Poppins400 blue-purple-button px-12 py-3 rounded-md'
-              onClick={handleRelease}
+              onClick={handleSave}
             >
-              Save changes
+              Edit admin
             </button>
             <button
               className='Poppins400 bg-[--red] text-white px-12 py-3 rounded-md'
@@ -273,7 +262,7 @@ const Create = () => {
             >
               Delete
             </button>
-            <Link to='/merchandise'>
+            <Link to='/voucher'>
               <button
                 className='w-full Poppins400 bg-white border-2 border-[--red] text-[--red] px-12 py-3 rounded-md'
               >
@@ -287,4 +276,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Edit;

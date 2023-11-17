@@ -87,7 +87,7 @@ const Merchandises = () => {
     };
 
     fetchAllMerchandise();
-  }, [])
+  }, [token])
   // =======================================
   
   return (
