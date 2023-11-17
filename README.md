@@ -36,7 +36,7 @@ Admins are able to register another admins.
 - New merchandise
   ![new merchandise](img/newMerch.png)
 - Edit merchandise
-  ![edit merchandise](img/editMerch.png)
+  ![edit merchandise](img/editMerch.jpg)
 - Voucher overview
   ![voucher](img/voucher.png)
 - New voucher
