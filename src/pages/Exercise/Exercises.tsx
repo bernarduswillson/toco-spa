@@ -15,7 +15,7 @@ import ExerciseMobileCard from '../../components/molecules/ExerciseCard';
 interface SearchData {
   search: string;
   difficulty: string;
-  language: string;
+  language: number;
 }
 
 interface ExerciseData {
@@ -53,23 +53,72 @@ const Exercises = () => {
   const [searchData, setSearchData] = useState<SearchData>({
     search: '',
     difficulty: '',
-    language: ''
+    language: 0
   });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSearchData({ ...searchData, [name]: value });
-    console.log(searchData.search);
   };
 
-  const handleSubmitSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // fetch di sini bew...
-  }
+  const handleSelectSearchChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setSearchData({ ...searchData, [name]: value });
+  };
+
+  const handleSubmitSearch = () => {
+    const fetchAllExercise = async () => {
+      try {
+        let endpoint = 'http://localhost:5000/exercise/';
+        if (searchData.search || searchData.difficulty || searchData.language) {
+          endpoint += '/search?';
+
+          let numOfParams = 0;
+
+          if (searchData.search) {
+            endpoint += `${numOfParams > 0 ? '&' : ''}q=${searchData.search}`;
+            numOfParams++;
+          }
+
+          if (searchData.language > 0) {
+            endpoint += `${numOfParams > 0 ? '&' : ''}lang=${searchData.language}`;
+            numOfParams++;
+          }
+
+          if (searchData.difficulty) {
+            endpoint += `${numOfParams > 0 ? '&' : ''}diff=${searchData.difficulty}`;
+            numOfParams++;
+          }
+        } 
+
+        console.log(searchData);
+
+        const response = await axios.get(endpoint, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        setExerciseData(response.data.result);
+
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
+      }
+    }
+
+    fetchAllExercise();
+  };
   // =======================================
   
   // Filter options ========================
   const difficultyOption = [
+    {
+      option: 'Difficulty',
+      value: ''
+    },
     {
       option: 'Beginner',
       value: 'beginner'
@@ -86,20 +135,24 @@ const Exercises = () => {
 
   const languageOption = [
     {
+      option: 'Language',
+      value: 0
+    },
+    {
       option: 'English',
-      value: 'english'
+      value: 1
     },
     {
       option: 'Indonesian',
-      value: 'indonesian'
+      value: 2
     },
     {
       option: 'Francais',
-      value: 'francais'
+      value: 3
     },
     {
       option: 'Deutsch',
-      value: 'deutsch'
+      value: 4
     },
   ];
   // =======================================
@@ -124,7 +177,7 @@ const Exercises = () => {
     }
 
     fetchAllExercise();
-  }, [])
+  }, []);
   // =======================================
   
   return (
@@ -143,23 +196,23 @@ const Exercises = () => {
 
         {/* Search and Filter */}
         <div className='w-full max-w-[920px]'>
-          <form onSubmit={handleSubmitSearch}>
+          <div>
             <div className='flex flex-col gap-2 w-full lg:flex-row'>
               <Searchbar onChange={handleSearchChange} />
               
               <div className='w-full flex gap-2'>
-                <Filter name='language' options={languageOption} />
-                <Filter name='difficulty' options={difficultyOption} />
+                <Filter name='language' options={languageOption} onChange={handleSelectSearchChange}/>
+                <Filter name='difficulty' options={difficultyOption} onChange={handleSelectSearchChange}/>
               </div>
 
               <button
-                type='submit'
+                onClick={handleSubmitSearch}
                 className='bg-[--orange] text-white Poppins400 px-10 py-1 rounded-md w-full lg:w-fit'
               >
                 Apply
               </button>
             </div>
-          </form>
+          </div>
         </div>
 
         {/* Records */}
