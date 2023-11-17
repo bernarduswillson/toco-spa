@@ -54,9 +54,24 @@ const Vouchers = () => {
     setSearchData({ ...searchData, [name]: value });
   };
 
-  const handleSubmitSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // fetch di sini bew...
+  const handleSubmitSearch = () => {
+    const fetchAllVouchers = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/voucher/search?q=${searchData.search}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+        });
+        setVoucherData(response.data.result);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          removeToken();
+          navigate('/login');
+        }
+      }
+    };
+
+    fetchAllVouchers();
   }
   // =======================================
   
@@ -99,18 +114,18 @@ const Vouchers = () => {
 
         {/* Search and Filter */}
         <div className='w-full max-w-[920px]'>
-          <form onSubmit={handleSubmitSearch}>
+          <div>
             <div className='flex flex-col gap-2 w-full lg:flex-row'>
               <Searchbar onChange={handleSearchChange} />
               
               <button
-                type='submit'
+                onClick={handleSubmitSearch}
                 className='bg-[--orange] text-white Poppins400 px-10 py-1 rounded-md w-full lg:w-fit'
               >
                 Apply
               </button>
             </div>
-          </form>
+          </div>
         </div>
 
         {/* Records */}
