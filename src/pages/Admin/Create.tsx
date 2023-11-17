@@ -139,7 +139,7 @@ const Create = () => {
     
       <div className='flex'>
         {/* Sidebar */}
-        <Sidebar active='Merchandise'/>
+        <Sidebar active='Admin'/>
 
         {/* Main content */}
         <div className='min-h-screen w-full py-5 lg:py-20 xl:py-28 pr-5 pl-28 flex flex-col gap-9 items-center'>

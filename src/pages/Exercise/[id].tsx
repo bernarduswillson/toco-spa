@@ -184,7 +184,7 @@ const Edit = () => {
     }
 
     validateExerciseId().then(fetchExerciseData);
-  }, [id, token, navigate]);
+  }, [id, token]);
   
   // Exercise input type text handler
   const handleExerciseInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {

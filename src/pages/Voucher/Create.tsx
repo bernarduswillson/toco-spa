@@ -96,7 +96,7 @@ const Create = () => {
       }
 
       try {
-        const response = await axios.post('http://localhost:5000/voucher/create', {
+        await axios.post('http://localhost:5000/voucher/create', {
           code: voucherData.code,
           amount: voucherData.amount,
         }, {
@@ -105,8 +105,6 @@ const Create = () => {
           },
         });
 
-        console.log(response.data.result);
-  
       } catch (error: any) {
         if (error.response.status === 401) {
           removeToken();
@@ -138,7 +136,7 @@ const Create = () => {
     
       <div className='flex'>
         {/* Sidebar */}
-        <Sidebar active='Merchandise'/>
+        <Sidebar active='Voucher'/>
 
         {/* Main content */}
         <div className='min-h-screen w-full py-5 lg:py-20 xl:py-28 pr-5 pl-28 flex flex-col gap-9 items-center'>
@@ -146,7 +144,7 @@ const Create = () => {
           {/* Header */}
           <div className="flex flex-col w-full max-w-[920px]">
             <Breadcrumbs urlPath={urlPath} />
-            <PageTitle text='New Admin'/>
+            <PageTitle text='New Voucher'/>
           </div>
 
           {/* Exercise Form */}
