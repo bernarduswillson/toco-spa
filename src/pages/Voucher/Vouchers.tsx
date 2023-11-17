@@ -52,7 +52,6 @@ const Vouchers = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSearchData({ ...searchData, [name]: value });
-    console.log(searchData.search);
   };
 
   const handleSubmitSearch = () => {
