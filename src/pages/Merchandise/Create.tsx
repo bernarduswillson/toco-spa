@@ -131,6 +131,7 @@ const Create = () => {
       navigate("/merchandise");
     };
 
+    showToast('Release merchandise successful', 'success');
     postMerchandiseData();
   };
   // =======================================
