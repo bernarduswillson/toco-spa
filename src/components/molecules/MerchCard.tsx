@@ -20,8 +20,8 @@ function ExerciseCard(props: MerchCardProps) {
         <span>{number}</span>
       </td>
 
-      <td className='text-center py-2'>
-        <img src="" alt="" />
+      <td className='text-center py-2 flex justify-center items-center'>
+        <img className='w-[12px] h-[12px] rounded-full overflow-hidden' src={`http://localhost:5000/image/?filename=${image}&apiKey=ax5kBNUxP2Cr0l8dwR472lMOiPeyJLRY7mKbTw0Cc8Z3hVW2kYmtAFcTNctI9139hHWUbJ5q3U8mRlZopXhFd9sTleg4lPr0DQkeMg3ntQZZFaTrASrWbc5QZ4CDIlPO`} alt={`name-${image}`} />
       </td>
 
       <td className='text-slate-500 text-xs Poppins400 px-2 py-2'>

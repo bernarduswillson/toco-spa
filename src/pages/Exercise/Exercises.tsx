@@ -91,8 +91,6 @@ const Exercises = () => {
           }
         } 
 
-        console.log(searchData);
-
         const response = await axios.get(endpoint, {
           headers: {
             'Authorization': `Bearer ${token}`,

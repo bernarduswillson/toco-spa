@@ -13,8 +13,6 @@ import MerchCard from '../../components/molecules/MerchCard';
 
 interface SearchData {
   search: string;
-  difficulty: string;
-  language: string;
 }
 
 interface MerchandiseData {
@@ -51,8 +49,6 @@ const Merchandises = () => {
   // Search and filter data ================
   const [searchData, setSearchData] = useState<SearchData>({
     search: '',
-    difficulty: '',
-    language: ''
   });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

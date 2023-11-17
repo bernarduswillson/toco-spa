@@ -230,7 +230,7 @@ const Create = () => {
           {/* Header */}
           <div className="flex flex-col w-full max-w-[920px]">
             <Breadcrumbs urlPath={urlPath} />
-            <PageTitle text='New Merchandise'/>
+            <PageTitle text='Edit Merchandise'/>
           </div>
 
           {/* Exercise Form */}
